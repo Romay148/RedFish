@@ -76,9 +76,11 @@ final class CameraManager: NSObject, ObservableObject {
                 DispatchQueue.main.async { completion(.failure(CameraError.sessionNotRunning)) }
                 return
             }
-            let settings = AVCapturePhotoSettings()
+            let settings: AVCapturePhotoSettings
             if photoOutput.availablePhotoCodecTypes.contains(.hevc) {
-                settings.format = [AVVideoCodecKey: AVVideoCodecType.hevc]
+                settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
+            } else {
+                settings = AVCapturePhotoSettings()
             }
             self.photoContinuation = completion
             photoOutput.capturePhoto(with: settings, delegate: self)
