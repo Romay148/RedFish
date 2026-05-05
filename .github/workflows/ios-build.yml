@@ -19,10 +19,26 @@ jobs:
       - name: Show Xcode version
         run: xcodebuild -version
 
+      - name: Locate Xcode project
+        id: locate
+        run: |
+          if [ -d "RedFish.xcodeproj" ]; then
+            echo "project_path=RedFish.xcodeproj" >> "$GITHUB_OUTPUT"
+          elif [ -d "RedFish/RedFish.xcodeproj" ]; then
+            echo "project_path=RedFish/RedFish.xcodeproj" >> "$GITHUB_OUTPUT"
+          else
+            echo "RedFish.xcodeproj introuvable dans le repo."
+            echo "Contenu de la racine:"
+            ls -la
+            echo "Contenu de ./RedFish (si présent):"
+            ls -la RedFish || true
+            exit 1
+          fi
+
       - name: Build RedFish for iOS (no signing)
         run: |
           xcodebuild \
-            -project RedFish.xcodeproj \
+            -project "${{ steps.locate.outputs.project_path }}" \
             -scheme RedFish \
             -configuration Debug \
             -destination "generic/platform=iOS" \
