@@ -38,10 +38,18 @@ jobs:
           fi
 
           cd "$PROJ_DIR"
+          set +e
           xcodebuild \
             -project RedFish.xcodeproj \
             -scheme RedFish \
             -destination 'generic/platform=iOS Simulator' \
             -configuration Debug \
             CODE_SIGNING_ALLOWED=NO \
-            build
+            build 2>&1 | tee xcodebuild.log
+          STATUS=${PIPESTATUS[0]}
+          set -e
+          if [ "$STATUS" -ne 0 ]; then
+            echo "::error::xcodebuild a échoué (code $STATUS). Premières lignes error: :"
+            grep "error:" xcodebuild.log | head -n 80 || true
+            exit "$STATUS"
+          fi

@@ -9,7 +9,7 @@ final class Shot {
     var createdAt: Date
     var roll: FilmRoll?
 
-    init(index: Int, relativeFileName: String, createdAt: Date = .now, roll: FilmRoll? = nil) {
+    init(index: Int, relativeFileName: String, createdAt: Date = Date(), roll: FilmRoll? = nil) {
         self.index = index
         self.relativeFileName = relativeFileName
         self.createdAt = createdAt

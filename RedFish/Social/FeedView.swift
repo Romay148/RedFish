@@ -70,7 +70,6 @@ struct FeedView: View {
 }
 
 /// UIKit bridge pour `UIActivityViewController`.
-@MainActor
 struct ActivityView: UIViewControllerRepresentable {
     let activityItems: [Any]
 

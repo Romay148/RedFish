@@ -12,7 +12,7 @@ final class RollService {
     }
 
     /// Clé `yyyy-MM` pour la date donnée (calendrier courant, fuseau local).
-    static func monthKey(for date: Date = .now) -> String {
+    static func monthKey(for date: Date = Date()) -> String {
         let cal = Calendar.current
         let y = cal.component(.year, from: date)
         let m = cal.component(.month, from: date)

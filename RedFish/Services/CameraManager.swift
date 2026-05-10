@@ -9,8 +9,7 @@ private struct CaptureCompletionBox: @unchecked Sendable {
 }
 
 /// Session caméra hors `@MainActor` pour que les délégués `AVFoundation` puissent accéder au verrou de capture.
-/// `ObservableObject` + closures `@Sendable` (ex. `onChange`) : marqué explicitement `Sendable` pour la vérification de concurrence.
-final class CameraManager: NSObject, ObservableObject, @unchecked Sendable {
+final class CameraManager: NSObject, ObservableObject {
     @Published private(set) var isAuthorized = false
     @Published private(set) var isConfigured = false
     @Published private(set) var lastError: String?
