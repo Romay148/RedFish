@@ -2,6 +2,7 @@ import SwiftData
 import SwiftUI
 import UIKit
 
+@MainActor
 struct RollDetailView: View {
     @Bindable var roll: FilmRoll
     let imagesVisible: Bool

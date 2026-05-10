@@ -1,6 +1,7 @@
 import SwiftData
 import SwiftUI
 
+@MainActor
 struct CameraCaptureView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var camera = CameraManager()

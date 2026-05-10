@@ -1,6 +1,7 @@
 import SwiftData
 import SwiftUI
 
+@MainActor
 struct GalleryView: View {
     @Query(sort: \FilmRoll.monthKey, order: .reverse) private var rolls: [FilmRoll]
     @Environment(\.modelContext) private var modelContext

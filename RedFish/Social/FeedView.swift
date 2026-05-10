@@ -2,6 +2,7 @@ import SwiftData
 import SwiftUI
 import UIKit
 
+@MainActor
 struct FeedView: View {
     @Query(sort: \FilmRoll.monthKey, order: .reverse) private var rolls: [FilmRoll]
     @State private var shareImages: [UIImage] = []
