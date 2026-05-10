@@ -1,8 +1,13 @@
-# Xcode
+# Xcode / Swift
 DerivedData/
 build/
 *.xcuserstate
 xcuserdata/
+*.swiftpm/
 
 # macOS
 .DS_Store
+
+# Éditeurs
+.idea/
+.vscode/

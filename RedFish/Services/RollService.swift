@@ -45,12 +45,14 @@ final class RollService {
             }
         }
 
-        if rolls.contains(where: { $0.monthKey == currentKey }) == false {
+        try? modelContext.save()
+
+        let refreshed = (try? modelContext.fetch(FetchDescriptor<FilmRoll>())) ?? []
+        if refreshed.contains(where: { $0.monthKey == currentKey }) == false {
             let newRoll = FilmRoll(monthKey: currentKey, displayState: .activeShooting)
             modelContext.insert(newRoll)
+            try? modelContext.save()
         }
-
-        try? modelContext.save()
     }
 
     func currentRoll() -> FilmRoll? {
@@ -83,20 +85,22 @@ final class RollService {
             return .notInShootingState
         }
 
-        guard roll.shotCount < Self.maxShotsPerRoll else { return .rollFull }
+        let existingCount = roll.shots.count
+        guard existingCount < Self.maxShotsPerRoll else { return .rollFull }
 
         do {
             let fileName = try PhotoStorage.shared.saveJPEG(data: jpegData, monthKey: roll.monthKey)
-            let nextIndex = roll.shotCount
+            let nextIndex = existingCount
             let shot = Shot(index: nextIndex, relativeFileName: fileName, roll: roll)
             modelContext.insert(shot)
 
-            if roll.shotCount >= Self.maxShotsPerRoll {
+            let newCount = existingCount + 1
+            if newCount >= Self.maxShotsPerRoll {
                 roll.displayState = .awaitingDevelopment
             }
 
             try modelContext.save()
-            let remaining = max(0, Self.maxShotsPerRoll - roll.shotCount)
+            let remaining = max(0, Self.maxShotsPerRoll - newCount)
             return .success(remaining: remaining)
         } catch {
             return .saveFailed
@@ -114,7 +118,7 @@ final class RollService {
         return roll.displayState == .activeShooting && roll.shotCount < Self.maxShotsPerRoll
     }
 
-    /// Vrai si les clichés de cette pellicule peuvent être affichés (pas de miniatures réelles avant).
+    /// Vrai si les clichés de cette pellicule peuvent être affichés.
     func imagesAreVisible(for roll: FilmRoll) -> Bool {
         roll.displayState == .developed
     }

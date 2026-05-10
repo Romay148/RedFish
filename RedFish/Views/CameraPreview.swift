@@ -20,7 +20,6 @@ struct CameraPreview: UIViewRepresentable {
         override class var layerClass: AnyClass { AVCaptureVideoPreviewLayer.self }
 
         var previewLayer: AVCaptureVideoPreviewLayer {
-            // swiftlint:disable:next force_cast
             layer as! AVCaptureVideoPreviewLayer
         }
     }

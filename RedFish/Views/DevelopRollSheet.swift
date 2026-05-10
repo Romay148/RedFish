@@ -18,7 +18,7 @@ struct DevelopRollSheet: View {
                     .scaleEffect(revealed ? 1.08 : 0.92)
                     .animation(.spring(response: 0.45, dampingFraction: 0.65), value: revealed)
 
-                Text(revealed ? "Vos 30 photos sont prêtes." : "Développement en cours…")
+                Text(revealed ? "Vos photos sont prêtes." : "Développement en cours…")
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
 
