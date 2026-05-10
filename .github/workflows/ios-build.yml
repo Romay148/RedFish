@@ -19,6 +19,20 @@ jobs:
         with:
           xcode-version: "15.4"
 
+      # actool exige exactement 1024×1024 pour l’icône « single size » ; normalise si le dépôt contient une autre taille.
+      - name: Normaliser l’icône App (1024×1024)
+        run: |
+          set -euo pipefail
+          ICON="$(find . -path '*/AppIcon.appiconset/AppIcon.png' -type f -print -quit || true)"
+          if [ -z "$ICON" ]; then
+            echo "AppIcon.png introuvable"
+            exit 1
+          fi
+          echo "Icône: $ICON"
+          sips -g pixelWidth -g pixelHeight "$ICON" || true
+          sips -z 1024 1024 "$ICON" --out "$ICON"
+          sips -g pixelWidth -g pixelHeight "$ICON"
+
       - name: Build (simulateur générique)
         run: |
           set -o pipefail
