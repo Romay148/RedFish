@@ -49,7 +49,8 @@ jobs:
           STATUS=${PIPESTATUS[0]}
           set -e
           if [ "$STATUS" -ne 0 ]; then
-            echo "::error::xcodebuild a échoué (code $STATUS). Premières lignes error: :"
-            grep "error:" xcodebuild.log | head -n 80 || true
+            echo "::error::xcodebuild a échoué (code $STATUS). Premières erreurs du log :"
+            grep -E "error:|\berror\b.*\.swift" xcodebuild.log | head -n 100 || true
+            echo "---- fin extrait (si vide, chercher FAILED / \*\* BUILD \*\* dans le log brut ci-dessus) ----"
             exit "$STATUS"
           fi

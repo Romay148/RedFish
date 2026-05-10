@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 /// Vue « réseau social » locale : dérivée d’une pellicule développée (pas de backend).
 struct Post: Identifiable, Hashable {

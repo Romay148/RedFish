@@ -4,10 +4,11 @@ import SwiftUI
 struct CameraCaptureView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var camera = CameraManager()
-    @State private var rollService: RollService?
     @State private var showDevelopSheet = false
     @State private var isCapturing = false
     @State private var banner: String?
+
+    private var rollService: RollService { RollService(modelContext: modelContext) }
 
     var body: some View {
         NavigationStack {
@@ -39,7 +40,7 @@ struct CameraCaptureView: View {
             .toolbarColorScheme(.dark, for: .navigationBar)
             .toolbar {
                 ToolbarItem(placement: .principal) {
-                    if let roll = rollService?.currentRoll() {
+                    if let roll = rollService.currentRoll() {
                         Text("\(roll.shotCount)/\(RollConstants.maxShotsPerRoll)")
                             .font(.headline.monospacedDigit())
                             .foregroundStyle(.white)
@@ -57,7 +58,7 @@ struct CameraCaptureView: View {
             }
             .sheet(isPresented: $showDevelopSheet) {
                 DevelopRollSheet(monthKey: RollService.monthKey()) {
-                    rollService?.developCurrentRoll()
+                    rollService.developCurrentRoll()
                 }
             }
             .onAppear {
@@ -65,9 +66,7 @@ struct CameraCaptureView: View {
                 if camera.isAuthorized {
                     camera.configureSessionIfNeeded()
                 }
-                let svc = RollService(modelContext: modelContext)
-                svc.ensureCurrentRoll()
-                rollService = svc
+                rollService.ensureCurrentRoll()
                 camera.startSession()
             }
             .onChange(of: camera.isAuthorized) { _, granted in
@@ -87,8 +86,8 @@ struct CameraCaptureView: View {
 
     @ViewBuilder
     private var controlBar: some View {
-        let canShoot = rollService?.canCaptureToday() ?? false
-        let awaiting = rollService?.currentRoll()?.displayState == .awaitingDevelopment
+        let canShoot = rollService.canCaptureToday()
+        let awaiting = rollService.currentRoll()?.displayState == .awaitingDevelopment
 
         HStack(spacing: 24) {
             if awaiting {
@@ -130,7 +129,7 @@ struct CameraCaptureView: View {
                 isCapturing = false
                 switch result {
                 case .success(let data):
-                    guard let svc = rollService else { return }
+                    let svc = RollService(modelContext: modelContext)
                     switch svc.capturePhoto(jpegData: data) {
                     case .success(let remaining):
                         banner = remaining == 0 ? "Pellicule pleine — développez pour voir vos photos." : "Photo enregistrée. Reste \(remaining)."
