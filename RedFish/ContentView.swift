@@ -4,6 +4,7 @@ import SwiftUI
 @MainActor
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some View {
         TabView {
@@ -15,6 +16,10 @@ struct ContentView: View {
                 .tabItem { Label("Fil", systemImage: "person.2.fill") }
         }
         .task {
+            RollService(modelContext: modelContext).ensureCurrentRoll()
+        }
+        .onChange(of: scenePhase) { _, phase in
+            guard phase == .active else { return }
             RollService(modelContext: modelContext).ensureCurrentRoll()
         }
     }

@@ -1,7 +1,6 @@
 import SwiftData
 import SwiftUI
 
-@MainActor
 struct CameraCaptureView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var camera = CameraManager()
@@ -83,9 +82,6 @@ struct CameraCaptureView: View {
             .onDisappear {
                 camera.stopSession()
             }
-            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
-                rollService?.ensureCurrentRoll()
-            }
         }
     }
 
@@ -130,25 +126,27 @@ struct CameraCaptureView: View {
         isCapturing = true
         banner = nil
         camera.capturePhoto { result in
-            isCapturing = false
-            switch result {
-            case .success(let data):
-                guard let svc = rollService else { return }
-                switch svc.capturePhoto(jpegData: data) {
-                case .success(let remaining):
-                    banner = remaining == 0 ? "Pellicule pleine — développez pour voir vos photos." : "Photo enregistrée. Reste \(remaining)."
-                    if remaining == 0 {
-                        showDevelopSheet = true
+            Task { @MainActor in
+                isCapturing = false
+                switch result {
+                case .success(let data):
+                    guard let svc = rollService else { return }
+                    switch svc.capturePhoto(jpegData: data) {
+                    case .success(let remaining):
+                        banner = remaining == 0 ? "Pellicule pleine — développez pour voir vos photos." : "Photo enregistrée. Reste \(remaining)."
+                        if remaining == 0 {
+                            showDevelopSheet = true
+                        }
+                    case .rollFull:
+                        banner = "Pellicule pleine."
+                    case .notInShootingState:
+                        banner = "Impossible d’ajouter une photo."
+                    case .saveFailed:
+                        banner = "Échec de l’enregistrement."
                     }
-                case .rollFull:
-                    banner = "Pellicule pleine."
-                case .notInShootingState:
-                    banner = "Impossible d’ajouter une photo."
-                case .saveFailed:
-                    banner = "Échec de l’enregistrement."
+                case .failure:
+                    banner = "Capture impossible."
                 }
-            case .failure:
-                banner = "Capture impossible."
             }
         }
     }

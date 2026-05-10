@@ -2,10 +2,12 @@ import Foundation
 import UIKit
 
 /// Point d’extension pour un futur partage distant (API) ; V1 : partage système uniquement.
+@MainActor
 protocol SocialSharing: AnyObject {
     func share(images: [UIImage], from viewController: UIViewController?)
 }
 
+@MainActor
 final class SystemSocialSharing: SocialSharing {
     func share(images: [UIImage], from viewController: UIViewController?) {
         guard !images.isEmpty else { return }
