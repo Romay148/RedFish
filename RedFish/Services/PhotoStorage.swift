@@ -6,13 +6,15 @@ enum PhotoStorageError: Error {
 }
 
 /// Stockage fichiers sous Application Support / RedFish / rolls / {monthKey} / …
-@MainActor
+/// Pas `@MainActor` : les corps de `ForEach` / `ViewBuilder` sont souvent **non isolés** par le compilateur ;
+/// on sérialise l’accès disque avec un verrou (appels UI toujours sur le fil principal en pratique).
 final class PhotoStorage {
     static let shared = PhotoStorage()
 
     private let fileManager = FileManager.default
+    private let lock = NSLock()
 
-    private var baseRollsDirectory: URL {
+    private func baseRollsDirectoryWhileLocked() -> URL {
         let appSupport = fileManager.urls(for: .applicationSupportDirectory, in: .userDomainMask).first!
         let dir = appSupport.appendingPathComponent("RedFish/rolls", isDirectory: true)
         try? fileManager.createDirectory(at: dir, withIntermediateDirectories: true)
@@ -20,18 +22,28 @@ final class PhotoStorage {
     }
 
     func directoryURL(forMonthKey monthKey: String) -> URL {
-        let dir = baseRollsDirectory.appendingPathComponent(monthKey, isDirectory: true)
+        lock.lock()
+        defer { lock.unlock() }
+        let dir = baseRollsDirectoryWhileLocked().appendingPathComponent(monthKey, isDirectory: true)
         try? fileManager.createDirectory(at: dir, withIntermediateDirectories: true)
         return dir
     }
 
     func fileURL(monthKey: String, relativeFileName: String) -> URL {
-        directoryURL(forMonthKey: monthKey).appendingPathComponent(relativeFileName)
+        lock.lock()
+        defer { lock.unlock() }
+        let dir = baseRollsDirectoryWhileLocked().appendingPathComponent(monthKey, isDirectory: true)
+        try? fileManager.createDirectory(at: dir, withIntermediateDirectories: true)
+        return dir.appendingPathComponent(relativeFileName)
     }
 
     func saveJPEG(data: Data, monthKey: String) throws -> String {
         let name = UUID().uuidString + ".jpg"
-        let url = fileURL(monthKey: monthKey, relativeFileName: name)
+        lock.lock()
+        let dir = baseRollsDirectoryWhileLocked().appendingPathComponent(monthKey, isDirectory: true)
+        try? fileManager.createDirectory(at: dir, withIntermediateDirectories: true)
+        let url = dir.appendingPathComponent(name)
+        lock.unlock()
         do {
             try data.write(to: url, options: .atomic)
             return name
@@ -41,13 +53,19 @@ final class PhotoStorage {
     }
 
     func loadImage(monthKey: String, relativeFileName: String) -> UIImage? {
-        let url = fileURL(monthKey: monthKey, relativeFileName: relativeFileName)
-        guard fileManager.fileExists(atPath: url.path) else { return nil }
-        return UIImage(contentsOfFile: url.path)
+        lock.lock()
+        let dir = baseRollsDirectoryWhileLocked().appendingPathComponent(monthKey, isDirectory: true)
+        try? fileManager.createDirectory(at: dir, withIntermediateDirectories: true)
+        let path = dir.appendingPathComponent(relativeFileName).path
+        lock.unlock()
+        guard fileManager.fileExists(atPath: path) else { return nil }
+        return UIImage(contentsOfFile: path)
     }
 
     func deleteRollFiles(monthKey: String) {
-        let dir = directoryURL(forMonthKey: monthKey)
+        lock.lock()
+        defer { lock.unlock() }
+        let dir = baseRollsDirectoryWhileLocked().appendingPathComponent(monthKey, isDirectory: true)
         try? fileManager.removeItem(at: dir)
     }
 }
