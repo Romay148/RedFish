@@ -3,6 +3,11 @@ import Combine
 import Foundation
 import UIKit
 
+/// Permet de stocker une completion non-`Sendable` dans le bloc `sessionQueue.async` (`@Sendable`).
+private struct CaptureCompletionBox: @unchecked Sendable {
+    let run: (Result<Data, Error>) -> Void
+}
+
 /// Session caméra hors `@MainActor` pour que les délégués `AVFoundation` puissent accéder au verrou de capture.
 final class CameraManager: NSObject, ObservableObject {
     @Published private(set) var isAuthorized = false
@@ -13,7 +18,7 @@ final class CameraManager: NSObject, ObservableObject {
 
     private let sessionQueue = DispatchQueue(label: "com.redfish.camera.session")
     private let captureLock = NSLock()
-    private var inFlightCapture: (@Sendable (Result<Data, Error>) -> Void)?
+    private var inFlightCapture: CaptureCompletionBox?
 
     private var photoOutput: AVCapturePhotoOutput?
     private var videoInput: AVCaptureDeviceInput?
@@ -89,14 +94,15 @@ final class CameraManager: NSObject, ObservableObject {
         }
     }
 
-    func capturePhoto(completion: @escaping @Sendable (Result<Data, Error>) -> Void) {
+    func capturePhoto(completion: @escaping (Result<Data, Error>) -> Void) {
+        let box = CaptureCompletionBox(run: completion)
         sessionQueue.async { [weak self] in
             guard let self, let photoOutput = self.photoOutput else {
-                DispatchQueue.main.async { completion(.failure(CameraError.notConfigured)) }
+                DispatchQueue.main.async { box.run(.failure(CameraError.notConfigured)) }
                 return
             }
             self.captureLock.lock()
-            self.inFlightCapture = completion
+            self.inFlightCapture = box
             self.captureLock.unlock()
             let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
             photoOutput.capturePhoto(with: settings, delegate: self)
@@ -129,13 +135,13 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
         guard let handler else { return }
 
         if let error {
-            DispatchQueue.main.async { handler(.failure(error)) }
+            DispatchQueue.main.async { handler.run(.failure(error)) }
             return
         }
         guard let data = photo.fileDataRepresentation() else {
-            DispatchQueue.main.async { handler(.failure(CameraError.captureFailed)) }
+            DispatchQueue.main.async { handler.run(.failure(CameraError.captureFailed)) }
             return
         }
-        DispatchQueue.main.async { handler(.success(data)) }
+        DispatchQueue.main.async { handler.run(.success(data)) }
     }
 }

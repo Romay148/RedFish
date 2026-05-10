@@ -1,6 +1,7 @@
 import SwiftData
 import SwiftUI
 
+@MainActor
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
 

@@ -11,3 +11,6 @@ xcuserdata/
 # Éditeurs
 .idea/
 .vscode/
+
+# Outils locaux (ex. MinGit portable pour scripts)
+.tools/

@@ -130,27 +130,25 @@ struct CameraCaptureView: View {
         isCapturing = true
         banner = nil
         camera.capturePhoto { result in
-            Task { @MainActor in
-                isCapturing = false
-                switch result {
-                case .success(let data):
-                    guard let svc = rollService else { return }
-                    switch svc.capturePhoto(jpegData: data) {
-                    case .success(let remaining):
-                        banner = remaining == 0 ? "Pellicule pleine — développez pour voir vos photos." : "Photo enregistrée. Reste \(remaining)."
-                        if remaining == 0 {
-                            showDevelopSheet = true
-                        }
-                    case .rollFull:
-                        banner = "Pellicule pleine."
-                    case .notInShootingState:
-                        banner = "Impossible d’ajouter une photo."
-                    case .saveFailed:
-                        banner = "Échec de l’enregistrement."
+            isCapturing = false
+            switch result {
+            case .success(let data):
+                guard let svc = rollService else { return }
+                switch svc.capturePhoto(jpegData: data) {
+                case .success(let remaining):
+                    banner = remaining == 0 ? "Pellicule pleine — développez pour voir vos photos." : "Photo enregistrée. Reste \(remaining)."
+                    if remaining == 0 {
+                        showDevelopSheet = true
                     }
-                case .failure:
-                    banner = "Capture impossible."
+                case .rollFull:
+                    banner = "Pellicule pleine."
+                case .notInShootingState:
+                    banner = "Impossible d’ajouter une photo."
+                case .saveFailed:
+                    banner = "Échec de l’enregistrement."
                 }
+            case .failure:
+                banner = "Capture impossible."
             }
         }
     }
