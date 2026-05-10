@@ -4,15 +4,15 @@ import SwiftData
 @Model
 final class Shot {
     var index: Int
-    /// Nom de fichier relatif au dossier Application Support (opaque)
+    /// Nom de fichier relatif au dossier stockage du mois (ex: `uuid.jpg`).
     var relativeFileName: String
-    var capturedAt: Date
-    var filmRoll: FilmRoll?
+    var createdAt: Date
+    var roll: FilmRoll?
 
-    init(index: Int, relativeFileName: String, capturedAt: Date = Date(), filmRoll: FilmRoll? = nil) {
+    init(index: Int, relativeFileName: String, createdAt: Date = .now, roll: FilmRoll? = nil) {
         self.index = index
         self.relativeFileName = relativeFileName
-        self.capturedAt = capturedAt
-        self.filmRoll = filmRoll
+        self.createdAt = createdAt
+        self.roll = roll
     }
 }

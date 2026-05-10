@@ -1,51 +1,74 @@
+import SwiftData
 import SwiftUI
 import UIKit
 
 struct RollDetailView: View {
-    let roll: FilmRoll
-
-    private var sortedShots: [Shot] {
-        roll.shots.sorted { $0.index < $1.index }
-    }
+    @Bindable var roll: FilmRoll
+    let imagesVisible: Bool
 
     private let columns = [
-        GridItem(.flexible(), spacing: 2),
-        GridItem(.flexible(), spacing: 2),
-        GridItem(.flexible(), spacing: 2),
+        GridItem(.adaptive(minimum: 100), spacing: 8)
     ]
 
     var body: some View {
         ScrollView {
-            LazyVGrid(columns: columns, spacing: 2) {
-                ForEach(sortedShots, id: \.persistentModelID) { shot in
-                    DiskImageView(relativePath: shot.relativeFileName)
-                        .aspectRatio(1, contentMode: .fill)
-                        .clipped()
+            LazyVGrid(columns: columns, spacing: 8) {
+                ForEach(0..<RollConstants.maxShotsPerRoll, id: \.self) { slot in
+                    slotView(index: slot)
                 }
             }
+            .padding()
         }
-        .navigationTitle(roll.displayMonthTitle)
+        .navigationTitle(title)
         .navigationBarTitleDisplayMode(.inline)
-        .background(Color.black)
     }
-}
 
-struct DiskImageView: View {
-    let relativePath: String
+    private var title: String { roll.monthKey }
 
-    var body: some View {
-        GeometryReader { geo in
-            let url = PhotoStorage.absoluteURL(forRelativePath: relativePath)
-            if let ui = UIImage(contentsOfFile: url.path) {
-                Image(uiImage: ui)
-                    .resizable()
-                    .scaledToFill()
-                    .frame(width: geo.size.width, height: geo.size.height)
+    @ViewBuilder
+    private func slotView(index: Int) -> some View {
+        let shot = roll.sortedShots().first { $0.index == index }
+        ZStack {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(Color(.secondarySystemFill))
+                .aspectRatio(1, contentMode: .fit)
+
+            if let shot {
+                if imagesVisible {
+                    if let ui = PhotoStorage.shared.loadImage(monthKey: roll.monthKey, relativeFileName: shot.relativeFileName) {
+                        Image(uiImage: ui)
+                            .resizable()
+                            .scaledToFill()
+                            .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
+                            .clipped()
+                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                    } else {
+                        missingLabel
+                    }
+                } else {
+                    hiddenPlaceholder
+                }
             } else {
-                Rectangle()
-                    .fill(Color.gray.opacity(0.3))
+                Text("—")
+                    .foregroundStyle(.tertiary)
             }
         }
         .aspectRatio(1, contentMode: .fit)
+    }
+
+    private var hiddenPlaceholder: some View {
+        VStack(spacing: 4) {
+            Image(systemName: "questionmark")
+                .font(.title2)
+                .foregroundStyle(.secondary)
+            Text("Non développé")
+                .font(.caption2)
+                .foregroundStyle(.tertiary)
+        }
+    }
+
+    private var missingLabel: some View {
+        Image(systemName: "exclamationmark.triangle")
+            .foregroundStyle(.orange)
     }
 }

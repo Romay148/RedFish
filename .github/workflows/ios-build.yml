@@ -1,46 +1,31 @@
-name: iOS Build (macOS)
+name: iOS Build
 
 on:
   push:
-    branches:
-      - main
-      - master
+    branches: [main]
   pull_request:
-  workflow_dispatch:
+    branches: [main]
 
 jobs:
   build:
-    runs-on: macos-latest
-
+    name: xcodebuild
+    runs-on: macos-14
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Show Xcode version
-        run: xcodebuild -version
+      - name: Select Xcode 15.4
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "15.4"
 
-      - name: Locate Xcode project
-        id: locate
+      - name: Build (simulateur générique)
         run: |
-          if [ -d "RedFish.xcodeproj" ]; then
-            echo "project_path=RedFish.xcodeproj" >> "$GITHUB_OUTPUT"
-          elif [ -d "RedFish/RedFish.xcodeproj" ]; then
-            echo "project_path=RedFish/RedFish.xcodeproj" >> "$GITHUB_OUTPUT"
-          else
-            echo "RedFish.xcodeproj introuvable dans le repo."
-            echo "Contenu de la racine:"
-            ls -la
-            echo "Contenu de ./RedFish (si présent):"
-            ls -la RedFish || true
-            exit 1
-          fi
-
-      - name: Build RedFish for iOS (no signing)
-        run: |
+          set -o pipefail
           xcodebuild \
-            -project "${{ steps.locate.outputs.project_path }}" \
+            -project RedFish.xcodeproj \
             -scheme RedFish \
+            -destination 'generic/platform=iOS Simulator' \
             -configuration Debug \
-            -destination "generic/platform=iOS" \
             CODE_SIGNING_ALLOWED=NO \
-            clean build
+            build

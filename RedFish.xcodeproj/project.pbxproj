@@ -7,40 +7,50 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E8F100002001 /* RedFishApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F100001001 /* RedFishApp.swift */; };
-		E8F100002002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F100001002 /* ContentView.swift */; };
-		E8F100002003 /* FilmRoll.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F100001003 /* FilmRoll.swift */; };
-		E8F100002004 /* Shot.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F100001004 /* Shot.swift */; };
-		E8F100002005 /* RollService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F100001005 /* RollService.swift */; };
-		E8F100002006 /* PhotoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F100001006 /* PhotoStorage.swift */; };
-		E8F100002007 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F100001007 /* CameraManager.swift */; };
-		E8F100002008 /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F100001008 /* CameraPreview.swift */; };
-		E8F100002009 /* CameraCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F100001009 /* CameraCaptureView.swift */; };
-		E8F10000200A /* DevelopRollSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F10000100A /* DevelopRollSheet.swift */; };
-		E8F10000200B /* RollDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F10000100B /* RollDetailView.swift */; };
-		E8F10000200C /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8F10000100C /* GalleryView.swift */; };
-		E8F10000200D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E8F10000100D /* Assets.xcassets */; };
+		B1B1B1B1B1B1B1B1B1B1B1B1 /* RedFishApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F1F1F1F1F1F1F1F1F1F1F1F1 /* RedFishApp.swift */; };
+		B2B2B2B2B2B2B2B2B2B2B2B2 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F2F2F2F2F2F2F2F2F2F2F2F2 /* ContentView.swift */; };
+		B3B3B3B3B3B3B3B3B3B3B3B3 /* RollDisplayState.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3F3F3F3F3F3F3F3F3F3F3F3 /* RollDisplayState.swift */; };
+		B4B4B4B4B4B4B4B4B4B4B4B4 /* RollConstants.swift in Sources */ = {isa = PBXBuildFile; fileRef = F4F4F4F4F4F4F4F4F4F4F4F4 /* RollConstants.swift */; };
+		B5B5B5B5B5B5B5B5B5B5B5B5 /* FilmRoll.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5F5F5F5F5F5F5F5F5F5F5F5 /* FilmRoll.swift */; };
+		B6B6B6B6B6B6B6B6B6B6B6B6 /* Shot.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6F6F6F6F6F6F6F6F6F6F6F6 /* Shot.swift */; };
+		B7B7B7B7B7B7B7B7B7B7B7B7 /* Post.swift in Sources */ = {isa = PBXBuildFile; fileRef = F7F7F7F7F7F7F7F7F7F7F7F7 /* Post.swift */; };
+		B8B8B8B8B8B8B8B8B8B8B8B8 /* RollService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8F8F8F8F8F8F8F8F8F8F8F8 /* RollService.swift */; };
+		B9B9B9B9B9B9B9B9B9B9B9B9 /* PhotoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F9F9F9F9F9F9F9F9F9F9F9 /* PhotoStorage.swift */; };
+		BABABABABABABABABABABABA /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFAFAFAFAFAFAFAFAFAFAFA /* CameraManager.swift */; };
+		BCBCBCBCBCBCBCBCBCBCBCBC /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = FCFCFCFCFCFCFCFCFCFCFCFC /* CameraPreview.swift */; };
+		BDBDBDBDBDBDBDBDBDBDBDBD /* DevelopRollSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = FDFDFDFDFDFDFDFDFDFDFDFD /* DevelopRollSheet.swift */; };
+		BEBEBEBEBEBEBEBEBEBEBEBE /* RollDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FEFEFEFEFEFEFEFEFEFEFEFE /* RollDetailView.swift */; };
+		BFBFBFBFBFBFBFBFBFBFBFBF /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFFFFFFFFFFFFFFFFFFFFFF /* GalleryView.swift */; };
+		C0C0C0C0C0C0C0C0C0C0C0C0 /* CameraCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D0D0D0D0D0D0D0D0D0D0D0 /* CameraCaptureView.swift */; };
+		C1C1C1C1C1C1C1C1C1C1C1C1 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D1D1D1D1D1D1D1D1D1D1D1 /* FeedView.swift */; };
+		C2C2C2C2C2C2C2C2C2C2C2C2 /* SocialSharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D2D2D2D2D2D2D2D2D2D2D2 /* SocialSharing.swift */; };
+		C3C3C3C3C3C3C3C3C3C3C3C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3D3D3D3D3D3D3D3D3D3D3D3 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		E8F100001001 /* RedFishApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedFishApp.swift; sourceTree = "<group>"; };
-		E8F100001002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
-		E8F100001003 /* FilmRoll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilmRoll.swift; sourceTree = "<group>"; };
-		E8F100001004 /* Shot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shot.swift; sourceTree = "<group>"; };
-		E8F100001005 /* RollService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollService.swift; sourceTree = "<group>"; };
-		E8F100001006 /* PhotoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStorage.swift; sourceTree = "<group>"; };
-		E8F100001007 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
-		E8F100001008 /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
-		E8F100001009 /* CameraCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureView.swift; sourceTree = "<group>"; };
-		E8F10000100A /* DevelopRollSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevelopRollSheet.swift; sourceTree = "<group>"; };
-		E8F10000100B /* RollDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollDetailView.swift; sourceTree = "<group>"; };
-		E8F10000100C /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
-		E8F10000100D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		E8F100001FFF /* RedFish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RedFish.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1F1F1F1F1F1F1F1F1F1F1F1 /* RedFishApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedFishApp.swift; sourceTree = "<group>"; };
+		F2F2F2F2F2F2F2F2F2F2F2F2 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		F3F3F3F3F3F3F3F3F3F3F3F3 /* RollDisplayState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollDisplayState.swift; sourceTree = "<group>"; };
+		F4F4F4F4F4F4F4F4F4F4F4F4 /* RollConstants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollConstants.swift; sourceTree = "<group>"; };
+		F5F5F5F5F5F5F5F5F5F5F5F5 /* FilmRoll.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilmRoll.swift; sourceTree = "<group>"; };
+		F6F6F6F6F6F6F6F6F6F6F6F6 /* Shot.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shot.swift; sourceTree = "<group>"; };
+		F7F7F7F7F7F7F7F7F7F7F7F7 /* Post.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Post.swift; sourceTree = "<group>"; };
+		F8F8F8F8F8F8F8F8F8F8F8F8 /* RollService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollService.swift; sourceTree = "<group>"; };
+		F9F9F9F9F9F9F9F9F9F9F9F9 /* PhotoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStorage.swift; sourceTree = "<group>"; };
+		FAFAFAFAFAFAFAFAFAFAFAFA /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
+		FCFCFCFCFCFCFCFCFCFCFCFC /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
+		FDFDFDFDFDFDFDFDFDFDFDFD /* DevelopRollSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DevelopRollSheet.swift; sourceTree = "<group>"; };
+		FEFEFEFEFEFEFEFEFEFEFEFE /* RollDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollDetailView.swift; sourceTree = "<group>"; };
+		FFFFFFFFFFFFFFFFFFFFFFFF /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
+		D0D0D0D0D0D0D0D0D0D0D0D0 /* CameraCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureView.swift; sourceTree = "<group>"; };
+		D1D1D1D1D1D1D1D1D1D1D1D1 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
+		D2D2D2D2D2D2D2D2D2D2D2D2 /* SocialSharing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialSharing.swift; sourceTree = "<group>"; };
+		D3D3D3D3D3D3D3D3D3D3D3D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E0E0E0E0E0E0E0E0E0E0E0E0 /* RedFish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RedFish.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		E8F100003001 /* Frameworks */ = {
+		1A1A1A1A1A1A1A1A1A1A1A1A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -50,76 +60,89 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		E8F100004001 = {
+		2A2A2A2A2A2A2A2A2A2A2A2A /* Root */ = {
 			isa = PBXGroup;
 			children = (
-				E8F100004002 /* RedFish */,
-				E8F100004003 /* Products */,
+				2B2B2B2B2B2B2B2B2B2B2B2B /* RedFish */,
+				2C2C2C2C2C2C2C2C2C2C2C2C /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		E8F100004002 /* RedFish */ = {
+		2B2B2B2B2B2B2B2B2B2B2B2B /* RedFish */ = {
 			isa = PBXGroup;
 			children = (
-				E8F100001001 /* RedFishApp.swift */,
-				E8F100001002 /* ContentView.swift */,
-				E8F100004004 /* Models */,
-				E8F100004005 /* Services */,
-				E8F100004006 /* Views */,
-				E8F10000100D /* Assets.xcassets */,
+				F1F1F1F1F1F1F1F1F1F1F1F1 /* RedFishApp.swift */,
+				F2F2F2F2F2F2F2F2F2F2F2F2 /* ContentView.swift */,
+				3A3A3A3A3A3A3A3A3A3A3A3A /* Models */,
+				3B3B3B3B3B3B3B3B3B3B3B3B /* Services */,
+				3C3C3C3C3C3C3C3C3C3C3C3C /* Views */,
+				3D3D3D3D3D3D3D3D3D3D3D3D /* Social */,
+				D3D3D3D3D3D3D3D3D3D3D3D3 /* Assets.xcassets */,
 			);
 			path = RedFish;
 			sourceTree = "<group>";
 		};
-		E8F100004004 /* Models */ = {
+		2C2C2C2C2C2C2C2C2C2C2C2C /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E8F100001003 /* FilmRoll.swift */,
-				E8F100001004 /* Shot.swift */,
+				E0E0E0E0E0E0E0E0E0E0E0E0 /* RedFish.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		3A3A3A3A3A3A3A3A3A3A3A3A /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				F3F3F3F3F3F3F3F3F3F3F3F3 /* RollDisplayState.swift */,
+				F4F4F4F4F4F4F4F4F4F4F4F4 /* RollConstants.swift */,
+				F5F5F5F5F5F5F5F5F5F5F5F5 /* FilmRoll.swift */,
+				F6F6F6F6F6F6F6F6F6F6F6F6 /* Shot.swift */,
+				F7F7F7F7F7F7F7F7F7F7F7F7 /* Post.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
 		};
-		E8F100004005 /* Services */ = {
+		3B3B3B3B3B3B3B3B3B3B3B3B /* Services */ = {
 			isa = PBXGroup;
 			children = (
-				E8F100001005 /* RollService.swift */,
-				E8F100001006 /* PhotoStorage.swift */,
-				E8F100001007 /* CameraManager.swift */,
+				F8F8F8F8F8F8F8F8F8F8F8F8 /* RollService.swift */,
+				F9F9F9F9F9F9F9F9F9F9F9F9 /* PhotoStorage.swift */,
+				FAFAFAFAFAFAFAFAFAFAFAFA /* CameraManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
 		};
-		E8F100004006 /* Views */ = {
+		3C3C3C3C3C3C3C3C3C3C3C3C /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				E8F100001008 /* CameraPreview.swift */,
-				E8F100001009 /* CameraCaptureView.swift */,
-				E8F10000100A /* DevelopRollSheet.swift */,
-				E8F10000100B /* RollDetailView.swift */,
-				E8F10000100C /* GalleryView.swift */,
+				FCFCFCFCFCFCFCFCFCFCFCFC /* CameraPreview.swift */,
+				FDFDFDFDFDFDFDFDFDFDFDFD /* DevelopRollSheet.swift */,
+				FEFEFEFEFEFEFEFEFEFEFEFE /* RollDetailView.swift */,
+				FFFFFFFFFFFFFFFFFFFFFFFF /* GalleryView.swift */,
+				D0D0D0D0D0D0D0D0D0D0D0D0 /* CameraCaptureView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
 		};
-		E8F100004003 /* Products */ = {
+		3D3D3D3D3D3D3D3D3D3D3D3D /* Social */ = {
 			isa = PBXGroup;
 			children = (
-				E8F100001FFF /* RedFish.app */,
+				D1D1D1D1D1D1D1D1D1D1D1D1 /* FeedView.swift */,
+				D2D2D2D2D2D2D2D2D2D2D2D2 /* SocialSharing.swift */,
 			);
-			name = Products;
+			path = Social;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E8F100005001 /* RedFish */ = {
+		4A4A4A4A4A4A4A4A4A4A4A4A /* RedFish */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E8F100009002 /* Build configuration list for PBXNativeTarget "RedFish" */;
+			buildConfigurationList = 5B5B5B5B5B5B5B5B5B5B5B5B /* Build configuration list for PBXNativeTarget "RedFish" */;
 			buildPhases = (
-				E8F100006001 /* Sources */,
-				E8F100003001 /* Frameworks */,
-				E8F100007001 /* Resources */,
+				4C4C4C4C4C4C4C4C4C4C4C4C /* Sources */,
+				1A1A1A1A1A1A1A1A1A1A1A1A /* Frameworks */,
+				4D4D4D4D4D4D4D4D4D4D4D4D /* Resources */,
 			);
 			buildRules = (
 			);
@@ -127,25 +150,25 @@
 			);
 			name = RedFish;
 			productName = RedFish;
-			productReference = E8F100001FFF /* RedFish.app */;
+			productReference = E0E0E0E0E0E0E0E0E0E0E0E0 /* RedFish.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		E8F100008001 /* Project object */ = {
+		5A5A5A5A5A5A5A5A5A5A5A5A /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1500;
 				LastUpgradeCheck = 1500;
 				TargetAttributes = {
-					E8F100005001 = {
+					4A4A4A4A4A4A4A4A4A4A4A4A = {
 						CreatedOnToolsVersion = 15.0;
 					};
 				};
 			};
-			buildConfigurationList = E8F100009001 /* Build configuration list for PBXProject "RedFish" */;
+			buildConfigurationList = 5C5C5C5C5C5C5C5C5C5C5C5C /* Build configuration list for PBXProject "RedFish" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = fr;
 			hasScannedForEncodings = 0;
@@ -154,51 +177,56 @@
 				Base,
 				fr,
 			);
-			mainGroup = E8F100004001;
-			productRefGroup = E8F100004003 /* Products */;
+			mainGroup = 2A2A2A2A2A2A2A2A2A2A2A2A /* Root */;
+			productRefGroup = 2C2C2C2C2C2C2C2C2C2C2C2C /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E8F100005001 /* RedFish */,
+				4A4A4A4A4A4A4A4A4A4A4A4A /* RedFish */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		E8F100007001 /* Resources */ = {
+		4D4D4D4D4D4D4D4D4D4D4D4D /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E8F10000200D /* Assets.xcassets in Resources */,
+				C3C3C3C3C3C3C3C3C3C3C3C3 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		E8F100006001 /* Sources */ = {
+		4C4C4C4C4C4C4C4C4C4C4C4C /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E8F100002001 /* RedFishApp.swift in Sources */,
-				E8F100002002 /* ContentView.swift in Sources */,
-				E8F100002003 /* FilmRoll.swift in Sources */,
-				E8F100002004 /* Shot.swift in Sources */,
-				E8F100002005 /* RollService.swift in Sources */,
-				E8F100002006 /* PhotoStorage.swift in Sources */,
-				E8F100002007 /* CameraManager.swift in Sources */,
-				E8F100002008 /* CameraPreview.swift in Sources */,
-				E8F100002009 /* CameraCaptureView.swift in Sources */,
-				E8F10000200A /* DevelopRollSheet.swift in Sources */,
-				E8F10000200B /* RollDetailView.swift in Sources */,
-				E8F10000200C /* GalleryView.swift in Sources */,
+				B1B1B1B1B1B1B1B1B1B1B1B1 /* RedFishApp.swift in Sources */,
+				B2B2B2B2B2B2B2B2B2B2B2B2 /* ContentView.swift in Sources */,
+				B3B3B3B3B3B3B3B3B3B3B3B3 /* RollDisplayState.swift in Sources */,
+				B4B4B4B4B4B4B4B4B4B4B4B4 /* RollConstants.swift in Sources */,
+				B5B5B5B5B5B5B5B5B5B5B5B5 /* FilmRoll.swift in Sources */,
+				B6B6B6B6B6B6B6B6B6B6B6B6 /* Shot.swift in Sources */,
+				B7B7B7B7B7B7B7B7B7B7B7B7 /* Post.swift in Sources */,
+				B8B8B8B8B8B8B8B8B8B8B8B8 /* RollService.swift in Sources */,
+				B9B9B9B9B9B9B9B9B9B9B9B9 /* PhotoStorage.swift in Sources */,
+				BABABABABABABABABABABABA /* CameraManager.swift in Sources */,
+				BCBCBCBCBCBCBCBCBCBCBCBC /* CameraPreview.swift in Sources */,
+				BDBDBDBDBDBDBDBDBDBDBDBD /* DevelopRollSheet.swift in Sources */,
+				BEBEBEBEBEBEBEBEBEBEBEBE /* RollDetailView.swift in Sources */,
+				BFBFBFBFBFBFBFBFBFBFBFBF /* GalleryView.swift in Sources */,
+				C0C0C0C0C0C0C0C0C0C0C0C0 /* CameraCaptureView.swift in Sources */,
+				C1C1C1C1C1C1C1C1C1C1C1C1 /* FeedView.swift in Sources */,
+				C2C2C2C2C2C2C2C2C2C2C2C2 /* SocialSharing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin XCBuildConfiguration section */
-		E8F10000A001 /* Debug */ = {
+		6A6A6A6A6A6A6A6A6A6A6A6A /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -209,28 +237,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -244,16 +250,8 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
@@ -261,7 +259,7 @@
 			};
 			name = Debug;
 		};
-		E8F10000A002 /* Release */ = {
+		6B6B6B6B6B6B6B6B6B6B6B6B /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -272,28 +270,6 @@
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_ARC = YES;
 				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
-				CLANG_WARN_BOOL_CONVERSION = YES;
-				CLANG_WARN_COMMA = YES;
-				CLANG_WARN_CONSTANT_CONVERSION = YES;
-				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
-				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_EMPTY_BODY = YES;
-				CLANG_WARN_ENUM_CONVERSION = YES;
-				CLANG_WARN_INFINITE_RECURSION = YES;
-				CLANG_WARN_INT_CONVERSION = YES;
-				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
-				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
-				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
-				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
-				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
-				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
-				CLANG_WARN_STRICT_PROTOTYPES = YES;
-				CLANG_WARN_SUSPICIOUS_MOVE = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CLANG_WARN_UNREACHABLE_CODE = YES;
-				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
@@ -301,23 +277,15 @@
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
-				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
-				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
-				GCC_WARN_UNDECLARED_SELECTOR = YES;
-				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
-				GCC_WARN_UNUSED_FUNCTION = YES;
-				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
 				MTL_ENABLE_DEBUG_INFO = NO;
-				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
 		};
-		E8F10000A003 /* Debug */ = {
+		6C6C6C6C6C6C6C6C6C6C6C6C /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -327,13 +295,11 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = RedFish;
-				INFOPLIST_KEY_NSCameraUsageDescription = "RedFish utilise la caméra pour vos rouleaux jetables. Les clichés restent invisibles jusqu’au développement du rouleau.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "RedFish utilise la caméra pour votre pellicule photo mensuelle (30 vues).";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "RedFish peut enregistrer des clichés dans votre photothèque si vous le choisissez.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -343,14 +309,13 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
-		E8F10000A004 /* Release */ = {
+		6D6D6D6D6D6D6D6D6D6D6D6D /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -360,13 +325,11 @@
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = RedFish;
-				INFOPLIST_KEY_NSCameraUsageDescription = "RedFish utilise la caméra pour vos rouleaux jetables. Les clichés restent invisibles jusqu’au développement du rouleau.";
+				INFOPLIST_KEY_NSCameraUsageDescription = "RedFish utilise la caméra pour votre pellicule photo mensuelle (30 vues).";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "RedFish peut enregistrer des clichés dans votre photothèque si vous le choisissez.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -376,7 +339,6 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SUPPORTS_MACCATALYST = NO;
-				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -386,25 +348,25 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		E8F100009001 /* Build configuration list for PBXProject "RedFish" */ = {
+		5C5C5C5C5C5C5C5C5C5C5C5C /* Build configuration list for PBXProject "RedFish" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E8F10000A001 /* Debug */,
-				E8F10000A002 /* Release */,
+				6A6A6A6A6A6A6A6A6A6A6A6A /* Debug */,
+				6B6B6B6B6B6B6B6B6B6B6B6B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E8F100009002 /* Build configuration list for PBXNativeTarget "RedFish" */ = {
+		5B5B5B5B5B5B5B5B5B5B5B5B /* Build configuration list for PBXNativeTarget "RedFish" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				E8F10000A003 /* Debug */,
-				E8F10000A004 /* Release */,
+				6C6C6C6C6C6C6C6C6C6C6C6C /* Debug */,
+				6D6D6D6D6D6D6D6D6D6D6D6D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = E8F100008001 /* Project object */;
+	rootObject = 5A5A5A5A5A5A5A5A5A5A5A5A /* Project object */;
 }

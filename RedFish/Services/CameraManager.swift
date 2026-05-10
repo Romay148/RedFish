@@ -1,114 +1,117 @@
 import AVFoundation
-import SwiftUI
+import Combine
+import Foundation
 import UIKit
 
+/// Session caméra hors `@MainActor` pour que les délégués `AVFoundation` puissent accéder au verrou de capture.
 final class CameraManager: NSObject, ObservableObject {
+    @Published private(set) var isAuthorized = false
+    @Published private(set) var isConfigured = false
+    @Published private(set) var lastError: String?
+
     let session = AVCaptureSession()
-    private let photoOutput = AVCapturePhotoOutput()
-    private var videoDeviceInput: AVCaptureDeviceInput?
+
     private let sessionQueue = DispatchQueue(label: "com.redfish.camera.session")
+    private let captureLock = NSLock()
+    private var inFlightCapture: (@Sendable (Result<Data, Error>) -> Void)?
 
-    @Published var authorizationDenied = false
-    @Published var setupFailedMessage: String?
+    private var photoOutput: AVCapturePhotoOutput?
+    private var videoInput: AVCaptureDeviceInput?
 
-    private var photoContinuation: ((Result<UIImage, Error>) -> Void)?
+    override init() {
+        super.init()
+    }
 
-    func checkAuthorizationAndConfigure() {
+    func checkAuthorization() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
         case .authorized:
-            configureSession()
+            DispatchQueue.main.async { self.isAuthorized = true }
+            configureSessionIfNeeded()
         case .notDetermined:
             AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
                 DispatchQueue.main.async {
-                    if granted {
-                        self?.configureSession()
-                    } else {
-                        self?.authorizationDenied = true
-                    }
+                    self?.isAuthorized = granted
+                    if granted { self?.configureSessionIfNeeded() }
                 }
             }
         default:
-            authorizationDenied = true
+            DispatchQueue.main.async { self.isAuthorized = false }
         }
     }
 
-    private func configureSession() {
+    func configureSessionIfNeeded() {
+        guard AVCaptureDevice.authorizationStatus(for: .video) == .authorized else { return }
         sessionQueue.async { [weak self] in
             guard let self else { return }
-            session.beginConfiguration()
-            session.sessionPreset = .photo
-
-            do {
-                if let existing = videoDeviceInput {
-                    session.removeInput(existing)
-                }
-                guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
-                    DispatchQueue.main.async { self.setupFailedMessage = "Caméra indisponible." }
-                    session.commitConfiguration()
-                    return
-                }
-                let input = try AVCaptureDeviceInput(device: device)
-                if session.canAddInput(input) {
-                    session.addInput(input)
-                    videoDeviceInput = input
-                }
-                if session.canAddOutput(photoOutput) {
-                    session.addOutput(photoOutput)
-                    photoOutput.maxPhotoQualityPrioritization = .quality
-                }
-            } catch {
-                DispatchQueue.main.async { self.setupFailedMessage = error.localizedDescription }
-                session.commitConfiguration()
+            if self.session.inputs.isEmpty == false {
+                DispatchQueue.main.async { self.isConfigured = true }
                 return
             }
+            self.session.beginConfiguration()
+            self.session.sessionPreset = .photo
+            defer { self.session.commitConfiguration() }
 
-            session.commitConfiguration()
-            if !session.isRunning {
-                session.startRunning()
+            guard let device = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back),
+                  let input = try? AVCaptureDeviceInput(device: device),
+                  self.session.canAddInput(input) else {
+                DispatchQueue.main.async { self.lastError = "Caméra indisponible" }
+                return
+            }
+            self.session.addInput(input)
+            self.videoInput = input
+
+            let output = AVCapturePhotoOutput()
+            guard self.session.canAddOutput(output) else {
+                DispatchQueue.main.async { self.lastError = "Sortie photo indisponible" }
+                return
+            }
+            self.session.addOutput(output)
+            self.photoOutput = output
+
+            DispatchQueue.main.async {
+                self.isConfigured = true
+                self.lastError = nil
             }
         }
     }
 
-    func capturePhoto(completion: @escaping (Result<UIImage, Error>) -> Void) {
+    func startSession() {
         sessionQueue.async { [weak self] in
-            guard let self else { return }
-            guard session.isRunning else {
-                DispatchQueue.main.async { completion(.failure(CameraError.sessionNotRunning)) }
-                return
-            }
-            let settings: AVCapturePhotoSettings
-            if photoOutput.availablePhotoCodecTypes.contains(.hevc) {
-                settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.hevc])
-            } else {
-                settings = AVCapturePhotoSettings()
-            }
-            self.photoContinuation = completion
-            photoOutput.capturePhoto(with: settings, delegate: self)
+            guard let self, self.session.isRunning == false else { return }
+            self.session.startRunning()
         }
     }
 
     func stopSession() {
         sessionQueue.async { [weak self] in
-            self?.session.stopRunning()
+            guard let self, self.session.isRunning else { return }
+            self.session.stopRunning()
         }
     }
 
-    func startSessionIfNeeded() {
+    func capturePhoto(completion: @escaping @Sendable (Result<Data, Error>) -> Void) {
         sessionQueue.async { [weak self] in
-            guard let self, !session.isRunning else { return }
-            session.startRunning()
+            guard let self, let photoOutput = self.photoOutput else {
+                DispatchQueue.main.async { completion(.failure(CameraError.notConfigured)) }
+                return
+            }
+            self.captureLock.lock()
+            self.inFlightCapture = completion
+            self.captureLock.unlock()
+            let settings = AVCapturePhotoSettings(format: [AVVideoCodecKey: AVVideoCodecType.jpeg])
+            photoOutput.capturePhoto(with: settings, delegate: self)
         }
     }
+}
 
-    enum CameraError: LocalizedError {
-        case sessionNotRunning
-        case noImageData
+enum CameraError: LocalizedError {
+    case notConfigured
+    case captureFailed
 
-        var errorDescription: String? {
-            switch self {
-            case .sessionNotRunning: return "La caméra n'est pas prête."
-            case .noImageData: return "Impossible de lire la photo."
-            }
+    var errorDescription: String? {
+        switch self {
+        case .notConfigured: return "Session non configurée"
+        case .captureFailed: return "Échec de la capture"
         }
     }
 }
@@ -119,33 +122,20 @@ extension CameraManager: AVCapturePhotoCaptureDelegate {
         didFinishProcessingPhoto photo: AVCapturePhoto,
         error: Error?
     ) {
-        if let error {
-            DispatchQueue.main.async { self.photoContinuation?(.failure(error)); self.photoContinuation = nil }
-            return
-        }
-        guard let data = photo.fileDataRepresentation(),
-              let image = UIImage(data: data) else {
-            DispatchQueue.main.async {
-                self.photoContinuation?(.failure(CameraError.noImageData))
-                self.photoContinuation = nil
-            }
-            return
-        }
-        let fixed = image.fixedOrientation()
-        DispatchQueue.main.async {
-            self.photoContinuation?(.success(fixed))
-            self.photoContinuation = nil
-        }
-    }
-}
+        captureLock.lock()
+        let handler = inFlightCapture
+        inFlightCapture = nil
+        captureLock.unlock()
+        guard let handler else { return }
 
-private extension UIImage {
-    func fixedOrientation() -> UIImage {
-        if imageOrientation == .up { return self }
-        UIGraphicsBeginImageContextWithOptions(size, false, scale)
-        draw(in: CGRect(origin: .zero, size: size))
-        let normalized = UIGraphicsGetImageFromCurrentImageContext()
-        UIGraphicsEndImageContext()
-        return normalized ?? self
+        if let error {
+            DispatchQueue.main.async { handler(.failure(error)) }
+            return
+        }
+        guard let data = photo.fileDataRepresentation() else {
+            DispatchQueue.main.async { handler(.failure(CameraError.captureFailed)) }
+            return
+        }
+        DispatchQueue.main.async { handler(.success(data)) }
     }
 }

@@ -1,83 +1,63 @@
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct GalleryView: View {
-    @Query(
-        filter: #Predicate<FilmRoll> { $0.isDeveloped == true },
-        sort: [SortDescriptor(\.developedAt, order: .reverse)]
-    )
-    private var developedRolls: [FilmRoll]
+    @Query(sort: \FilmRoll.monthKey, order: .reverse) private var rolls: [FilmRoll]
+    @Environment(\.modelContext) private var modelContext
+
+    private var service: RollService { RollService(modelContext: modelContext) }
 
     var body: some View {
         NavigationStack {
-            Group {
-                if developedRolls.isEmpty {
-                    VStack(spacing: 12) {
-                        Image(systemName: "photo.on.rectangle.angled")
-                            .font(.system(size: 48))
-                            .foregroundStyle(.secondary)
-                        Text("Aucun rouleau développé pour l’instant.")
-                            .font(.body)
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
-                    }
-                    .padding()
-                } else {
-                    List {
-                        ForEach(developedRolls, id: \.id) { roll in
-                            NavigationLink {
-                                RollDetailView(roll: roll)
-                            } label: {
-                                GalleryRow(roll: roll)
+            List {
+                ForEach(rolls, id: \.monthKey) { roll in
+                    NavigationLink {
+                        RollDetailView(
+                            roll: roll,
+                            imagesVisible: service.imagesAreVisible(for: roll)
+                        )
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 4) {
+                                Text(monthLabel(roll.monthKey))
+                                    .font(.headline)
+                                Text(statusLine(for: roll))
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
                             }
-                            .listRowBackground(Color(red: 0.07, green: 0.07, blue: 0.08))
+                            Spacer()
+                            Text("\(roll.shotCount)/\(RollConstants.maxShotsPerRoll)")
+                                .font(.subheadline.monospacedDigit())
+                                .foregroundStyle(.secondary)
                         }
                     }
-                    .listStyle(.plain)
-                    .scrollContentBackground(.hidden)
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.black)
             .navigationTitle("Galerie")
         }
     }
-}
 
-private struct GalleryRow: View {
-    let roll: FilmRoll
-
-    var body: some View {
-        HStack(spacing: 14) {
-            thumbnail
-                .frame(width: 56, height: 56)
-                .clipShape(RoundedRectangle(cornerRadius: 8, style: .continuous))
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(roll.displayMonthTitle)
-                    .font(.headline)
-                    .foregroundStyle(.primary)
-                if let d = roll.developedAt {
-                    Text(d, style: .date)
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                }
-                Text("\(roll.shots.count) photos")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
-            }
-            Spacer()
-        }
-        .padding(.vertical, 4)
+    private func monthLabel(_ key: String) -> String {
+        let parts = key.split(separator: "-")
+        guard parts.count == 2,
+              let y = Int(parts[0]), let m = Int(parts[1]) else { return key }
+        var cal = Calendar(identifier: .gregorian)
+        cal.locale = Locale(identifier: "fr_FR")
+        guard let date = cal.date(from: DateComponents(year: y, month: m)) else { return key }
+        let fmt = DateFormatter()
+        fmt.locale = Locale(identifier: "fr_FR")
+        fmt.dateFormat = "LLLL yyyy"
+        return fmt.string(from: date).capitalized
     }
 
-    @ViewBuilder
-    private var thumbnail: some View {
-        if let first = roll.shots.sorted(by: { $0.index < $1.index }).first {
-            DiskImageView(relativePath: first.relativeFileName)
-        } else {
-            Rectangle()
-                .fill(Color.gray.opacity(0.25))
+    private func statusLine(for roll: FilmRoll) -> String {
+        switch roll.displayState {
+        case .activeShooting:
+            return "En cours — clichés masqués"
+        case .awaitingDevelopment:
+            return "À développer"
+        case .developed:
+            return roll.shotCount == RollConstants.maxShotsPerRoll ? "Pellicule complète" : "Développée (mois écoulé)"
         }
     }
 }

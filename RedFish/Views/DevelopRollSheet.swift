@@ -1,47 +1,52 @@
 import SwiftUI
-import SwiftData
 
 struct DevelopRollSheet: View {
-    @Bindable var roll: FilmRoll
-    @Environment(\.modelContext) private var modelContext
+    let monthKey: String
+    let onFinish: () -> Void
+
+    @State private var revealed = false
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 24) {
-                Text("Comme un vrai jetable : après développement, vos 30 photos seront visibles dans la Galerie, dans l’ordre.")
-                    .font(.body)
-                    .foregroundStyle(.secondary)
+                Text("Pellicule \(monthKey)")
+                    .font(.headline)
+                Image(systemName: "film.stack")
+                    .font(.system(size: 72))
+                    .opacity(revealed ? 1 : 0.4)
+                    .scaleEffect(revealed ? 1.08 : 0.92)
+                    .animation(.spring(response: 0.45, dampingFraction: 0.65), value: revealed)
+
+                Text(revealed ? "Vos 30 photos sont prêtes." : "Développement en cours…")
                     .multilineTextAlignment(.center)
-                    .padding(.horizontal)
+                    .foregroundStyle(.secondary)
 
-                Button {
-                    do {
-                        try RollService.develop(roll: roll, in: modelContext)
+                if revealed {
+                    Button("Voir la galerie") {
+                        onFinish()
                         dismiss()
-                    } catch {
-                        // conservé minimal ; erreurs rares (disque plein, etc.)
                     }
-                } label: {
-                    Text("Développer")
-                        .frame(maxWidth: .infinity)
-                        .padding(.vertical, 14)
+                    .buttonStyle(.borderedProminent)
                 }
-                .buttonStyle(.borderedProminent)
-                .disabled(roll.shots.count != FilmRoll.capacity)
-
-                Spacer()
             }
-            .padding(.top, 24)
-            .background(Color.black)
-            .navigationTitle("Développer")
+            .padding()
+            .navigationTitle("Développement")
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Annuler") { dismiss() }
+                    Button("Fermer") { dismiss() }
+                }
+            }
+            .onAppear {
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+                    revealed = true
                 }
             }
         }
-        .presentationDetents([.medium])
     }
+}
+
+#Preview {
+    DevelopRollSheet(monthKey: "2026-05") {}
 }

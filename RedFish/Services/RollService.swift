@@ -1,45 +1,121 @@
 import Foundation
 import SwiftData
 
-enum RollService {
-    /// Crée un rouleau pour le mois courant s'il n'existe pas encore.
-    @discardableResult
-    static func ensureCurrentMonthRoll(in context: ModelContext) throws -> FilmRoll {
-        let key = FilmRoll.monthKey()
-        let fd = FetchDescriptor<FilmRoll>(
-            predicate: #Predicate<FilmRoll> { $0.monthKey == key }
-        )
-        let existing = try context.fetch(fd)
-        if let first = existing.first {
-            return first
+@MainActor
+final class RollService {
+    static let maxShotsPerRoll = RollConstants.maxShotsPerRoll
+
+    private let modelContext: ModelContext
+
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
+    }
+
+    /// Clé `yyyy-MM` pour la date donnée (calendrier courant, fuseau local).
+    static func monthKey(for date: Date = .now) -> String {
+        let cal = Calendar.current
+        let y = cal.component(.year, from: date)
+        let m = cal.component(.month, from: date)
+        return String(format: "%04d-%02d", y, m)
+    }
+
+    /// Compare deux clés `yyyy-MM` : true si a est strictement avant b.
+    static func monthKey(_ a: String, isBefore b: String) -> Bool {
+        a < b
+    }
+
+    /// Au lancement / retour au premier plan : finalise les anciens mois, garantit une pellicule pour le mois courant.
+    func ensureCurrentRoll() {
+        let currentKey = Self.monthKey()
+        let descriptor = FetchDescriptor<FilmRoll>(sortBy: [SortDescriptor(\.monthKey, order: .forward)])
+        let rolls = (try? modelContext.fetch(descriptor)) ?? []
+
+        for roll in rolls where Self.monthKey(roll.monthKey, isBefore: currentKey) {
+            switch roll.displayState {
+            case .activeShooting:
+                if roll.shots.isEmpty {
+                    modelContext.delete(roll)
+                } else {
+                    roll.displayState = .developed
+                }
+            case .awaitingDevelopment:
+                roll.displayState = .developed
+            case .developed:
+                break
+            }
         }
-        let roll = FilmRoll(monthKey: key)
-        context.insert(roll)
-        try context.save()
-        return roll
+
+        if rolls.contains(where: { $0.monthKey == currentKey }) == false {
+            let newRoll = FilmRoll(monthKey: currentKey, displayState: .activeShooting)
+            modelContext.insert(newRoll)
+        }
+
+        try? modelContext.save()
     }
 
-    /// Rouleaux non développés, du plus récent au plus ancien (par mois).
-    static func undevelopedRolls(in context: ModelContext) throws -> [FilmRoll] {
-        var fd = FetchDescriptor<FilmRoll>(
-            predicate: #Predicate<FilmRoll> { $0.isDeveloped == false },
-            sortBy: [SortDescriptor(\.monthKey, order: .reverse)]
-        )
-        return try context.fetch(fd)
+    func currentRoll() -> FilmRoll? {
+        let key = Self.monthKey()
+        let predicate = #Predicate<FilmRoll> { $0.monthKey == key }
+        var descriptor = FetchDescriptor<FilmRoll>(predicate: predicate)
+        descriptor.fetchLimit = 1
+        return try? modelContext.fetch(descriptor).first
     }
 
-    static func developedRolls(in context: ModelContext) throws -> [FilmRoll] {
-        var fd = FetchDescriptor<FilmRoll>(
-            predicate: #Predicate<FilmRoll> { $0.isDeveloped == true },
-            sortBy: [SortDescriptor(\.developedAt, order: .reverse)]
-        )
-        return try context.fetch(fd)
+    func allRollsSorted() -> [FilmRoll] {
+        let descriptor = FetchDescriptor<FilmRoll>(sortBy: [SortDescriptor(\.monthKey, order: .reverse)])
+        return (try? modelContext.fetch(descriptor)) ?? []
     }
 
-    static func develop(roll: FilmRoll, in context: ModelContext) throws {
-        guard roll.shots.count == FilmRoll.capacity else { return }
-        roll.isDeveloped = true
-        roll.developedAt = Date()
-        try context.save()
+    enum CaptureResult {
+        case success(remaining: Int)
+        case rollFull
+        case notInShootingState
+        case saveFailed
+    }
+
+    func capturePhoto(jpegData: Data) -> CaptureResult {
+        guard let roll = currentRoll() else { return .saveFailed }
+
+        switch roll.displayState {
+        case .activeShooting:
+            break
+        case .awaitingDevelopment, .developed:
+            return .notInShootingState
+        }
+
+        guard roll.shotCount < Self.maxShotsPerRoll else { return .rollFull }
+
+        do {
+            let fileName = try PhotoStorage.shared.saveJPEG(data: jpegData, monthKey: roll.monthKey)
+            let nextIndex = roll.shotCount
+            let shot = Shot(index: nextIndex, relativeFileName: fileName, roll: roll)
+            modelContext.insert(shot)
+
+            if roll.shotCount >= Self.maxShotsPerRoll {
+                roll.displayState = .awaitingDevelopment
+            }
+
+            try modelContext.save()
+            let remaining = max(0, Self.maxShotsPerRoll - roll.shotCount)
+            return .success(remaining: remaining)
+        } catch {
+            return .saveFailed
+        }
+    }
+
+    func developCurrentRoll() {
+        guard let roll = currentRoll(), roll.displayState == .awaitingDevelopment else { return }
+        roll.displayState = .developed
+        try? modelContext.save()
+    }
+
+    func canCaptureToday() -> Bool {
+        guard let roll = currentRoll() else { return false }
+        return roll.displayState == .activeShooting && roll.shotCount < Self.maxShotsPerRoll
+    }
+
+    /// Vrai si les clichés de cette pellicule peuvent être affichés (pas de miniatures réelles avant).
+    func imagesAreVisible(for roll: FilmRoll) -> Bool {
+        roll.displayState == .developed
     }
 }

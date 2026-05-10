@@ -1,115 +1,153 @@
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct CameraCaptureView: View {
-    @Bindable var roll: FilmRoll
     @Environment(\.modelContext) private var modelContext
     @StateObject private var camera = CameraManager()
-    @State private var isCapturing = false
-    @State private var errorMessage: String?
+    @State private var rollService: RollService?
     @State private var showDevelopSheet = false
+    @State private var isCapturing = false
+    @State private var banner: String?
 
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-
-            if camera.authorizationDenied {
-                Text("Autorisez l'accès à la caméra dans Réglages.")
-                    .foregroundStyle(.white.opacity(0.85))
-                    .multilineTextAlignment(.center)
-                    .padding()
-            } else if let msg = camera.setupFailedMessage {
-                Text(msg)
-                    .foregroundStyle(.white.opacity(0.85))
-                    .padding()
-            } else {
-                CameraPreview(session: camera.session)
-                    .ignoresSafeArea()
+        NavigationStack {
+            ZStack {
+                if camera.isAuthorized && camera.isConfigured {
+                    CameraPreview(session: camera.session)
+                        .ignoresSafeArea()
+                } else {
+                    Color.black.ignoresSafeArea()
+                    VStack(spacing: 12) {
+                        Image(systemName: "camera.fill")
+                            .font(.largeTitle)
+                        Text(camera.isAuthorized ? "Préparation de la caméra…" : "Autorisez l’accès à la caméra dans Réglages.")
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal)
+                    }
+                    .foregroundStyle(.white)
+                }
 
                 VStack {
                     Spacer()
-
-                    Text("\(roll.shots.count)/\(FilmRoll.capacity)")
-                        .font(.system(size: 28, weight: .semibold, design: .rounded))
-                        .foregroundStyle(.white)
-                        .shadow(color: .black.opacity(0.5), radius: 4, x: 0, y: 1)
-                        .padding(.bottom, 24)
-
-                    Button {
-                        takePhoto()
-                    } label: {
-                        ZStack {
-                            Circle()
-                                .strokeBorder(Color.white, lineWidth: 4)
-                                .frame(width: 76, height: 76)
-                            Circle()
-                                .fill(canShoot ? Color.white : Color.white.opacity(0.35))
-                                .frame(width: 62, height: 62)
-                        }
+                    controlBar
+                }
+                .padding(.bottom, 28)
+            }
+            .navigationTitle("Appareil du mois")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbarBackground(.visible, for: .navigationBar)
+            .toolbarColorScheme(.dark, for: .navigationBar)
+            .toolbar {
+                ToolbarItem(placement: .principal) {
+                    if let roll = rollService?.currentRoll() {
+                        Text("\(roll.shotCount)/\(RollConstants.maxShotsPerRoll)")
+                            .font(.headline.monospacedDigit())
+                            .foregroundStyle(.white)
                     }
-                    .disabled(!canShoot || isCapturing)
-                    .padding(.bottom, 40)
                 }
             }
+            .safeAreaInset(edge: .top) {
+                if let banner {
+                    Text(banner)
+                        .font(.caption)
+                        .padding(8)
+                        .frame(maxWidth: .infinity)
+                        .background(.ultraThinMaterial)
+                }
+            }
+            .sheet(isPresented: $showDevelopSheet) {
+                DevelopRollSheet(monthKey: RollService.monthKey()) {
+                    rollService?.developCurrentRoll()
+                }
+            }
+            .onAppear {
+                camera.checkAuthorization()
+                if camera.isAuthorized {
+                    camera.configureSessionIfNeeded()
+                }
+                let svc = RollService(modelContext: modelContext)
+                svc.ensureCurrentRoll()
+                rollService = svc
+                camera.startSession()
+            }
+            .onChange(of: camera.isAuthorized) { _, granted in
+                if granted {
+                    camera.configureSessionIfNeeded()
+                    camera.startSession()
+                }
+            }
+            .onChange(of: camera.isConfigured) { _, ready in
+                if ready { camera.startSession() }
+            }
+            .onDisappear {
+                camera.stopSession()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                rollService?.ensureCurrentRoll()
+            }
         }
-        .onAppear {
-            camera.checkAuthorizationAndConfigure()
-            camera.startSessionIfNeeded()
-        }
-        .onDisappear {
-            camera.stopSession()
-        }
-        .alert("Erreur", isPresented: Binding(
-            get: { errorMessage != nil },
-            set: { if !$0 { errorMessage = nil } }
-        )) {
-            Button("OK", role: .cancel) {}
-        } message: {
-            Text(errorMessage ?? "")
-        }
-        .sheet(isPresented: $showDevelopSheet) {
-            DevelopRollSheet(roll: roll)
-        }
-        .safeAreaInset(edge: .top) {
-            if roll.isFull && !roll.isDeveloped {
+    }
+
+    @ViewBuilder
+    private var controlBar: some View {
+        let canShoot = rollService?.canCaptureToday() ?? false
+        let awaiting = rollService?.currentRoll()?.displayState == .awaitingDevelopment
+
+        HStack(spacing: 24) {
+            if awaiting {
                 Button {
                     showDevelopSheet = true
                 } label: {
-                    Text("Développer le rouleau")
-                        .font(.subheadline.weight(.semibold))
-                        .foregroundStyle(.black)
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 10)
-                        .background(Color.white)
-                        .clipShape(Capsule())
+                    Label("Développer", systemImage: "film.stack")
+                        .labelStyle(.titleAndIcon)
                 }
-                .padding(.top, 8)
+                .buttonStyle(.borderedProminent)
+                .tint(.yellow)
+                .foregroundStyle(.black)
+            } else {
+                Button {
+                    capture()
+                } label: {
+                    ZStack {
+                        Circle()
+                            .strokeBorder(.white, lineWidth: 4)
+                            .frame(width: 72, height: 72)
+                        Circle()
+                            .fill(canShoot && !isCapturing ? Color.white : Color.gray.opacity(0.5))
+                            .frame(width: 58, height: 58)
+                    }
+                }
+                .disabled(!canShoot || isCapturing)
             }
         }
+        .padding()
+        .background(.black.opacity(0.35), in: Capsule())
     }
 
-    private var canShoot: Bool {
-        !roll.isDeveloped && roll.shots.count < FilmRoll.capacity && !roll.isFull
-    }
-
-    private func takePhoto() {
-        guard canShoot, !isCapturing else { return }
+    private func capture() {
+        guard !isCapturing else { return }
         isCapturing = true
-        let nextIndex = roll.shots.count + 1
+        banner = nil
         camera.capturePhoto { result in
-            defer { isCapturing = false }
+            isCapturing = false
             switch result {
-            case .failure(let err):
-                errorMessage = err.localizedDescription
-            case .success(let image):
-                do {
-                    let rel = try PhotoStorage.saveJPEG(image, rollId: roll.id, index: nextIndex)
-                    let shot = Shot(index: nextIndex, relativeFileName: rel, filmRoll: roll)
-                    modelContext.insert(shot)
-                    try modelContext.save()
-                } catch {
-                    errorMessage = error.localizedDescription
+            case .success(let data):
+                guard let svc = rollService else { return }
+                switch svc.capturePhoto(jpegData: data) {
+                case .success(let remaining):
+                    banner = remaining == 0 ? "Pellicule pleine — développez pour voir vos photos." : "Photo enregistrée. Reste \(remaining)."
+                    if remaining == 0 {
+                        showDevelopSheet = true
+                    }
+                case .rollFull:
+                    banner = "Pellicule pleine."
+                case .notInShootingState:
+                    banner = "Impossible d’ajouter une photo."
+                case .saveFailed:
+                    banner = "Échec de l’enregistrement."
                 }
+            case .failure:
+                banner = "Capture impossible."
             }
         }
     }
