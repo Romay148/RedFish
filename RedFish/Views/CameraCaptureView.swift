@@ -55,15 +55,11 @@ struct CameraCaptureView: View {
                         }
                         .tint(.white)
                     }
-                    ToolbarItem(placement: .principal) {
-                        Group {
-                            if let roll = rollService.currentRoll() {
+                    ToolbarItemGroup(placement: .principal) {
+                        if let roll = rollService.currentRoll() {
                             Text("\(roll.shotCount)/\(RollConstants.maxShotsPerRoll)")
                                 .font(.headline.monospacedDigit())
                                 .foregroundStyle(.white)
-                            } else {
-                                EmptyView()
-                            }
                         }
                     }
                 }

@@ -5,8 +5,10 @@ import SwiftData
 final class RollService {
     static let maxShotsPerRoll = RollConstants.maxShotsPerRoll
 
-    private let modelContext: ModelContext
+    nonisolated(unsafe) private let modelContext: ModelContext
 
+    /// Autorise l'init depuis un contexte non isolé tout en gardant la classe @MainActor.
+    nonisolated
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
     }
