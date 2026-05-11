@@ -23,7 +23,6 @@
 		BFBFBFBFBFBFBFBFBFBFBFBF /* GalleryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FFFFFFFFFFFFFFFFFFFFFFFF /* GalleryView.swift */; };
 		C0C0C0C0C0C0C0C0C0C0C0C0 /* CameraCaptureView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D0D0D0D0D0D0D0D0D0D0D0 /* CameraCaptureView.swift */; };
 		C1C1C1C1C1C1C1C1C1C1C1C1 /* FeedView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1D1D1D1D1D1D1D1D1D1D1D1 /* FeedView.swift */; };
-		C2C2C2C2C2C2C2C2C2C2C2C2 /* SocialSharing.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D2D2D2D2D2D2D2D2D2D2D2 /* SocialSharing.swift */; };
 		C3C3C3C3C3C3C3C3C3C3C3C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3D3D3D3D3D3D3D3D3D3D3D3 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -44,7 +43,6 @@
 		FFFFFFFFFFFFFFFFFFFFFFFF /* GalleryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GalleryView.swift; sourceTree = "<group>"; };
 		D0D0D0D0D0D0D0D0D0D0D0D0 /* CameraCaptureView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraCaptureView.swift; sourceTree = "<group>"; };
 		D1D1D1D1D1D1D1D1D1D1D1D1 /* FeedView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedView.swift; sourceTree = "<group>"; };
-		D2D2D2D2D2D2D2D2D2D2D2D2 /* SocialSharing.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialSharing.swift; sourceTree = "<group>"; };
 		D3D3D3D3D3D3D3D3D3D3D3D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E0E0E0E0E0E0E0E0E0E0E0E0 /* RedFish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RedFish.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -128,7 +126,6 @@
 			isa = PBXGroup;
 			children = (
 				D1D1D1D1D1D1D1D1D1D1D1D1 /* FeedView.swift */,
-				D2D2D2D2D2D2D2D2D2D2D2D2 /* SocialSharing.swift */,
 			);
 			path = Social;
 			sourceTree = "<group>";
@@ -219,7 +216,6 @@
 				BFBFBFBFBFBFBFBFBFBFBFBF /* GalleryView.swift in Sources */,
 				C0C0C0C0C0C0C0C0C0C0C0C0 /* CameraCaptureView.swift in Sources */,
 				C1C1C1C1C1C1C1C1C1C1C1C1 /* FeedView.swift in Sources */,
-				C2C2C2C2C2C2C2C2C2C2C2C2 /* SocialSharing.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

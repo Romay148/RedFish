@@ -1,56 +1,37 @@
-# Compilation iOS sur runner macOS (pas besoin de Mac local).
-name: iOS Build
+name: Build IPA (minimal)
 
 on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+  workflow_dispatch:
 
 jobs:
   build:
-    name: xcodebuild
-    runs-on: macos-14
+    runs-on: macos-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Xcode 15.4
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: "15.4"
-
-      - name: Icône 1024×1024 + build simulateur
+      - name: Build app (unsigned)
         run: |
-          set -euo pipefail
-          PROJ_DIR="$(dirname "$(find "$GITHUB_WORKSPACE" -name 'RedFish.xcodeproj' -type d | head -n 1)")"
-          echo "Dossier projet: $PROJ_DIR"
-          test -f "$PROJ_DIR/RedFish.xcodeproj/project.pbxproj"
-
-          ICON="$(find "$PROJ_DIR" -path '*/AppIcon.appiconset/AppIcon.png' -type f | head -n 1 || true)"
-          if [ -n "$ICON" ] && [ -f "$ICON" ]; then
-            echo "Normalisation icône: $ICON"
-            sips -g pixelWidth -g pixelHeight "$ICON" || true
-            sips -z 1024 1024 "$ICON" --out "$ICON"
-            sips -g pixelWidth -g pixelHeight "$ICON"
-          else
-            echo "::warning::AppIcon.png introuvable sous AppIcon.appiconset"
-          fi
-
-          cd "$PROJ_DIR"
-          set +e
           xcodebuild \
             -project RedFish.xcodeproj \
             -scheme RedFish \
-            -destination 'generic/platform=iOS Simulator' \
-            -configuration Debug \
+            -configuration Release \
+            -sdk iphoneos \
+            -derivedDataPath build \
             CODE_SIGNING_ALLOWED=NO \
-            build 2>&1 | tee xcodebuild.log
-          STATUS=${PIPESTATUS[0]}
-          set -e
-          if [ "$STATUS" -ne 0 ]; then
-            echo "::error::xcodebuild a échoué (code $STATUS). Premières erreurs du log :"
-            grep -E "error:|\berror\b.*\.swift" xcodebuild.log | head -n 100 || true
-            echo "---- fin extrait (si vide, chercher FAILED / \*\* BUILD \*\* dans le log brut ci-dessus) ----"
-            exit "$STATUS"
-          fi
+            clean build
+
+      - name: Create payload
+        run: |
+          mkdir -p Payload
+          cp -R build/Build/Products/Release-iphoneos/RedFish.app Payload/
+
+      - name: Package IPA
+        run: |
+          /usr/bin/zip -r RedFish-unsigned.ipa Payload
+
+      - name: Upload IPA artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RedFish-ipa
+          path: RedFish-unsigned.ipa
