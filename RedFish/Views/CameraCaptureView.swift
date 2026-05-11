@@ -43,16 +43,38 @@ struct CameraCaptureView: View {
                 }
                 .navigationTitle("Appareil du mois")
                 .navigationBarTitleDisplayMode(.inline)
-                .toolbarBackground(.visible, for: .navigationBar)
-                .toolbarColorScheme(.dark, for: .navigationBar)
-                .toolbar { cameraToolbar }
                 .safeAreaInset(edge: .top) {
-                    if let banner {
-                        Text(banner)
-                            .font(.caption)
-                            .padding(8)
-                            .frame(maxWidth: .infinity)
-                            .background(.ultraThinMaterial)
+                    VStack(spacing: 8) {
+                        HStack {
+                            Button {
+                                selectedCameraID = nil
+                                camera.stopSession()
+                            } label: {
+                                Label("Appareils", systemImage: "chevron.left")
+                                    .font(.subheadline.weight(.semibold))
+                            }
+                            .buttonStyle(.bordered)
+                            .tint(.white)
+
+                            Spacer()
+
+                            if let roll = rollService.currentRoll() {
+                                Text("\(roll.shotCount)/\(RollConstants.maxShotsPerRoll)")
+                                    .font(.headline.monospacedDigit())
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 8)
+                        .background(.black.opacity(0.35), in: Capsule())
+
+                        if let banner {
+                            Text(banner)
+                                .font(.caption)
+                                .padding(8)
+                                .frame(maxWidth: .infinity)
+                                .background(.ultraThinMaterial)
+                        }
                     }
                 }
             }
@@ -166,27 +188,6 @@ struct CameraCaptureView: View {
         }
         .padding()
         .background(.black.opacity(0.35), in: Capsule())
-    }
-
-    @ToolbarContentBuilder
-    private var cameraToolbar: some ToolbarContent {
-        ToolbarItem(placement: .topBarLeading) {
-            Button {
-                selectedCameraID = nil
-                camera.stopSession()
-            } label: {
-                Label("Appareils", systemImage: "chevron.left")
-            }
-            .tint(.white)
-        }
-
-        ToolbarItem(placement: .principal) {
-            if let roll = rollService.currentRoll() {
-                Text("\(roll.shotCount)/\(RollConstants.maxShotsPerRoll)")
-                    .font(.headline.monospacedDigit())
-                    .foregroundStyle(.white)
-            }
-        }
     }
 
     private func capture() {
