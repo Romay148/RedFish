@@ -214,3 +214,4 @@ struct CameraCaptureView: View {
             }
         }
 }
+}
