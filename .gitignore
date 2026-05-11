@@ -14,3 +14,4 @@ xcuserdata/
 
 # Outils locaux (ex. MinGit portable pour scripts)
 .tools/
+web-mirror/
