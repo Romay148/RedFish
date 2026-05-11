@@ -78,27 +78,27 @@ struct CameraCaptureView: View {
                     }
                 }
             }
-            .sheet(isPresented: $showDevelopSheet) {
+        }
+        .sheet(isPresented: $showDevelopSheet) {
                 DevelopRollSheet(monthKey: RollService.monthKey()) {
                     rollService.developCurrentRoll()
                 }
             }
-            .onAppear {
+        .onAppear {
                 rollService.ensureCurrentRoll()
             }
-            .onChange(of: camera.isAuthorized) { _, granted in
+        .onChange(of: camera.isAuthorized) { _, granted in
                 if granted && selectedCameraID != nil {
                     camera.configureSessionIfNeeded()
                     camera.startSession()
                 }
             }
-            .onChange(of: camera.isConfigured) { _, ready in
+        .onChange(of: camera.isConfigured) { _, ready in
                 if ready && selectedCameraID != nil { camera.startSession() }
             }
-            .onDisappear {
+        .onDisappear {
                 camera.stopSession()
             }
-        }
     }
 
     private var cameraSelectionView: some View {
