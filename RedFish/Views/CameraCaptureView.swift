@@ -45,7 +45,7 @@ struct CameraCaptureView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(.visible, for: .navigationBar)
                 .toolbarColorScheme(.dark, for: .navigationBar)
-                .toolbar {
+                .toolbar(content: {
                     ToolbarItemGroup(placement: .topBarLeading) {
                         Button {
                             selectedCameraID = nil
@@ -213,5 +213,5 @@ struct CameraCaptureView: View {
                 }
             }
         }
-    }
+                })
 }
