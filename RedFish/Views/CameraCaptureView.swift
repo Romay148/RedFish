@@ -6,6 +6,7 @@ struct CameraCaptureView: View {
     @Environment(\.modelContext) private var modelContext
     @StateObject private var camera = CameraManager()
     @State private var showDevelopSheet = false
+    @State private var selectedCameraID: String?
     @State private var isCapturing = false
     @State private var banner: String?
 
@@ -13,48 +14,63 @@ struct CameraCaptureView: View {
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                if camera.isAuthorized && camera.isConfigured {
-                    CameraPreview(session: camera.session)
-                        .ignoresSafeArea()
-                } else {
-                    Color.black.ignoresSafeArea()
-                    VStack(spacing: 12) {
-                        Image(systemName: "camera.fill")
-                            .font(.largeTitle)
-                        Text(camera.isAuthorized ? "Préparation de la caméra…" : "Autorisez l’accès à la caméra dans Réglages.")
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal)
+            if selectedCameraID == nil {
+                cameraSelectionView
+                    .navigationTitle("Choix de l'appareil")
+                    .navigationBarTitleDisplayMode(.inline)
+            } else {
+                ZStack {
+                    if camera.isAuthorized && camera.isConfigured {
+                        CameraPreview(session: camera.session)
+                            .ignoresSafeArea()
+                    } else {
+                        Color.black.ignoresSafeArea()
+                        VStack(spacing: 12) {
+                            Image(systemName: "camera.fill")
+                                .font(.largeTitle)
+                            Text(camera.isAuthorized ? "Préparation de la caméra…" : "Autorisez l’accès à la caméra dans Réglages.")
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal)
+                        }
+                        .foregroundStyle(.white)
                     }
-                    .foregroundStyle(.white)
-                }
 
-                VStack {
-                    Spacer()
-                    controlBar
+                    VStack {
+                        Spacer()
+                        controlBar
+                    }
+                    .padding(.bottom, 28)
                 }
-                .padding(.bottom, 28)
-            }
-            .navigationTitle("Appareil du mois")
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbarBackground(.visible, for: .navigationBar)
-            .toolbarColorScheme(.dark, for: .navigationBar)
-            .toolbar {
-                ToolbarItem(placement: .principal) {
-                    if let roll = rollService.currentRoll() {
-                        Text("\(roll.shotCount)/\(RollConstants.maxShotsPerRoll)")
-                            .font(.headline.monospacedDigit())
-                            .foregroundStyle(.white)
+                .navigationTitle("Appareil du mois")
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbarBackground(.visible, for: .navigationBar)
+                .toolbarColorScheme(.dark, for: .navigationBar)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button {
+                            selectedCameraID = nil
+                            camera.stopSession()
+                        } label: {
+                            Label("Appareils", systemImage: "chevron.left")
+                        }
+                        .tint(.white)
+                    }
+                    ToolbarItem(placement: .principal) {
+                        if let roll = rollService.currentRoll() {
+                            Text("\(roll.shotCount)/\(RollConstants.maxShotsPerRoll)")
+                                .font(.headline.monospacedDigit())
+                                .foregroundStyle(.white)
+                        }
                     }
                 }
-            }
-            .safeAreaInset(edge: .top) {
-                if let banner {
-                    Text(banner)
-                        .font(.caption)
-                        .padding(8)
-                        .frame(maxWidth: .infinity)
-                        .background(.ultraThinMaterial)
+                .safeAreaInset(edge: .top) {
+                    if let banner {
+                        Text(banner)
+                            .font(.caption)
+                            .padding(8)
+                            .frame(maxWidth: .infinity)
+                            .background(.ultraThinMaterial)
+                    }
                 }
             }
             .sheet(isPresented: $showDevelopSheet) {
@@ -63,26 +79,74 @@ struct CameraCaptureView: View {
                 }
             }
             .onAppear {
-                camera.checkAuthorization()
-                if camera.isAuthorized {
-                    camera.configureSessionIfNeeded()
-                }
                 rollService.ensureCurrentRoll()
-                camera.startSession()
             }
             .onChange(of: camera.isAuthorized) { _, granted in
-                if granted {
+                if granted && selectedCameraID != nil {
                     camera.configureSessionIfNeeded()
                     camera.startSession()
                 }
             }
             .onChange(of: camera.isConfigured) { _, ready in
-                if ready { camera.startSession() }
+                if ready && selectedCameraID != nil { camera.startSession() }
             }
             .onDisappear {
                 camera.stopSession()
             }
         }
+    }
+
+    private var cameraSelectionView: some View {
+        let monthKey = RollService.monthKey()
+        let remaining = max(0, RollConstants.maxShotsPerRoll - (rollService.currentRoll()?.shotCount ?? 0))
+
+        return ScrollView {
+            VStack(alignment: .leading, spacing: 12) {
+                Text("Vos appareils")
+                    .font(.title2.bold())
+
+                Button {
+                    selectedCameraID = monthKey
+                    banner = nil
+                    camera.checkAuthorization()
+                    if camera.isAuthorized {
+                        camera.configureSessionIfNeeded()
+                    }
+                    camera.startSession()
+                } label: {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Image("appareilphotodetourne")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(maxWidth: 300, maxHeight: 220)
+                            .frame(maxWidth: .infinity, alignment: .center)
+
+                        Text(cameraName(for: monthKey))
+                            .font(.headline)
+
+                        Text("\(remaining) photos restantes")
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .buttonStyle(.plain)
+            }
+            .padding()
+        }
+    }
+
+    private func cameraName(for monthKey: String) -> String {
+        let parts = monthKey.split(separator: "-")
+        guard parts.count == 2,
+              let y = Int(parts[0]),
+              let m = Int(parts[1]) else { return "Appareil du mois" }
+        var cal = Calendar(identifier: .gregorian)
+        cal.locale = Locale(identifier: "fr_FR")
+        guard let date = cal.date(from: DateComponents(year: y, month: m)) else { return "Appareil du mois" }
+        let fmt = DateFormatter()
+        fmt.locale = Locale(identifier: "fr_FR")
+        fmt.dateFormat = "LLLL"
+        return "Appareil de \(fmt.string(from: date))"
     }
 
     @ViewBuilder

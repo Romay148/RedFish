@@ -1,0 +1,376 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RedFish - Miroir Web</title>
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      :root {
+        color-scheme: dark;
+        --bg: #fce8ee;
+        --bg-2: #f9dce6;
+        --card: #fff4f7;
+        --muted: #8a5d67;
+        --text: #4b2330;
+        --accent: #ef7081;
+        --accent-soft: #f07a8a;
+        --green: #2e9b68;
+        --yellow: #ffd166;
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        font-family: Inter, Segoe UI, system-ui, Arial, sans-serif;
+        background: radial-gradient(1000px 500px at 20% -20%, #ffd6e0, var(--bg));
+        color: var(--text);
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 20px;
+      }
+      .phone {
+        width: min(420px, 100%);
+        height: min(860px, 88vh);
+        background: linear-gradient(180deg, #fff8fa 0%, var(--bg-2) 100%);
+        border: 1px solid #f1b8c6;
+        border-radius: 28px;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(239, 112, 129, 0.25);
+        display: flex;
+        flex-direction: column;
+      }
+      .header {
+        padding: 14px 16px;
+        border-bottom: 1px solid #f1b8c6;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+      .title { font-weight: 700; font-size: 15px; }
+      .content {
+        flex: 1;
+        overflow: auto;
+        padding: 14px;
+      }
+      .tabs {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        border-top: 1px solid #f1b8c6;
+      }
+      .tab {
+        background: transparent;
+        color: var(--muted);
+        border: none;
+        padding: 12px 8px;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .tab.active {
+        color: #4b2330;
+        background: color-mix(in oklab, var(--accent) 24%, #fff4f7);
+      }
+      .card {
+        background: var(--card);
+        border: 1px solid #f0c5cf;
+        border-radius: 16px;
+        padding: 12px;
+        margin-bottom: 12px;
+      }
+      .muted { color: var(--muted); font-size: 13px; }
+      .chip {
+        font-size: 12px;
+        padding: 4px 10px;
+        border-radius: 999px;
+        border: 1px solid #f1b8c6;
+        color: var(--muted);
+        background: #fff2f6;
+      }
+      .grid {
+        display: grid;
+        grid-template-columns: repeat(5, 1fr);
+        gap: 6px;
+      }
+      .shot {
+        aspect-ratio: 1;
+        border-radius: 8px;
+        background: linear-gradient(145deg, #ffdbe4, #f8c8d4);
+        border: 1px solid #efb6c4;
+        display: grid;
+        place-items: center;
+        font-size: 10px;
+        color: #6e3f4c;
+      }
+      .toolbar {
+        position: sticky;
+        bottom: 10px;
+        display: flex;
+        justify-content: center;
+      }
+      .capture {
+        width: 72px;
+        height: 72px;
+        border-radius: 999px;
+        border: 4px solid white;
+        background: #e9edf6;
+        cursor: pointer;
+      }
+      .capture:disabled {
+        opacity: 0.4;
+        cursor: not-allowed;
+      }
+      .btn {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .btn.yellow { background: var(--yellow); color: #222; }
+      .btn.blue { background: var(--accent); color: #0f1522; }
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.55);
+        display: grid;
+        place-items: center;
+        padding: 18px;
+      }
+      .modal {
+        width: min(420px, 100%);
+        background: #fff6f8;
+        border: 1px solid #efb6c4;
+        border-radius: 16px;
+        padding: 16px;
+      }
+      .preview-row {
+        display: flex;
+        gap: 8px;
+        overflow: auto;
+      }
+      .preview-img {
+        min-width: 88px;
+        height: 88px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--accent), var(--accent-soft));
+      }
+      .ok { color: var(--green); }
+      .capture {
+        background: var(--accent);
+        border-color: #fff6f8;
+      }
+      .device-grid {
+        min-height: 58vh;
+        display: grid;
+        place-items: center;
+      }
+      .device-card {
+        border: none;
+        background: transparent;
+        padding: 0;
+        cursor: pointer;
+      }
+      .device-img {
+        width: min(320px, 86vw);
+        height: auto;
+        object-fit: contain;
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="text/babel">
+      const { useMemo, useState } = React;
+
+      const MAX_SHOTS = 30;
+
+      const initialRolls = [
+        { monthKey: "2026-05", state: "activeShooting", shotCount: 12 },
+        { monthKey: "2026-04", state: "developed", shotCount: 30 },
+        { monthKey: "2026-03", state: "developed", shotCount: 30 }
+      ];
+
+      function monthLabel(key) {
+        const [year, month] = key.split("-").map(Number);
+        const d = new Date(year, month - 1, 1);
+        return d.toLocaleDateString("fr-FR", { month: "long", year: "numeric" });
+      }
+      function cameraName(key) {
+        const [year, month] = key.split("-").map(Number);
+        const d = new Date(year, month - 1, 1);
+        const m = d.toLocaleDateString("fr-FR", { month: "long" });
+        return `Appareil de ${m}`;
+      }
+
+      function App() {
+        const [tab, setTab] = useState("camera");
+        const [rolls, setRolls] = useState(initialRolls);
+        const [banner, setBanner] = useState("");
+        const [showDevelop, setShowDevelop] = useState(false);
+        const [selectedCamera, setSelectedCamera] = useState(null);
+
+        const currentRoll = rolls[0];
+        const canCapture = currentRoll.state === "activeShooting" && currentRoll.shotCount < MAX_SHOTS;
+        const shouldDevelop = currentRoll.state === "awaitingDevelopment";
+
+        const developedPosts = useMemo(
+          () => rolls.filter((r) => r.state === "developed" && r.shotCount > 0),
+          [rolls]
+        );
+
+        function captureMock() {
+          if (!canCapture) return;
+          setRolls((prev) => {
+            const next = [...prev];
+            const updated = { ...next[0], shotCount: next[0].shotCount + 1 };
+            if (updated.shotCount >= MAX_SHOTS) {
+              updated.state = "awaitingDevelopment";
+            }
+            next[0] = updated;
+            return next;
+          });
+          setBanner("Photo enregistrée (miroir web).");
+        }
+
+        function developCurrentRoll() {
+          setRolls((prev) => {
+            const next = [...prev];
+            next[0] = { ...next[0], state: "developed" };
+            return next;
+          });
+          setShowDevelop(false);
+          setTab("gallery");
+        }
+
+        return (
+          <div className="phone">
+            <div className="header">
+              <span className="title">RedFish - Miroir Web</span>
+              <span className="chip">Prototype UI</span>
+            </div>
+
+            <div className="content">
+              {tab === "camera" && (
+                <>
+                  {selectedCamera === null ? (
+                    <div className="device-grid">
+                        <div style={{ width: "100%", maxWidth: 360 }}>
+                          <h2 style={{ marginTop: 0, marginBottom: 10 }}>Vos appareils</h2>
+                        </div>
+                        <button className="device-card" onClick={() => setSelectedCamera(currentRoll.monthKey)} aria-label="Ouvrir l'appareil photo du mois">
+                          <img
+                            className="device-img"
+                            src="../RedFish/appareilphotodetourne.png"
+                            alt="Appareil photo du mois"
+                            onError={(e) => {
+                              e.currentTarget.src = "../RedFish/Assets.xcassets/AppIcon.appiconset/AppIcon.png";
+                            }}
+                          />
+                          <div style={{ marginTop: 10, textAlign: "left" }}>
+                            <strong>{cameraName(currentRoll.monthKey)}</strong>
+                            <p className="muted" style={{ margin: "4px 0 0" }}>
+                              {MAX_SHOTS - currentRoll.shotCount} photos restantes
+                            </p>
+                          </div>
+                        </button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="card">
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <strong>Appareil du mois</strong>
+                          <span>{currentRoll.shotCount}/{MAX_SHOTS}</span>
+                        </div>
+                        <p className="muted">
+                          Camera active: {selectedCamera} ({currentRoll.state})
+                        </p>
+                        {banner && <p className="ok">{banner}</p>}
+                        <div style={{ display: "flex", gap: 8 }}>
+                          <button className="btn" onClick={() => setSelectedCamera(null)}>Retour aux appareils</button>
+                          {shouldDevelop && (
+                            <button className="btn yellow" onClick={() => setShowDevelop(true)}>Developper</button>
+                          )}
+                        </div>
+                      </div>
+                      <div className="toolbar">
+                        <button className="capture" disabled={!canCapture} onClick={captureMock} title="Capture mock" />
+                      </div>
+                    </>
+                  )}
+                </>
+              )}
+
+              {tab === "gallery" && (
+                <>
+                  {rolls.map((roll) => (
+                    <div className="card" key={roll.monthKey}>
+                      <div style={{ display: "flex", justifyContent: "space-between" }}>
+                        <strong>{monthLabel(roll.monthKey)}</strong>
+                        <span>{roll.shotCount}/{MAX_SHOTS}</span>
+                      </div>
+                      <p className="muted">Etat: {roll.state}</p>
+                      <div className="grid">
+                        {Array.from({ length: Math.min(roll.shotCount, 20) }).map((_, i) => (
+                          <div className="shot" key={i}>#{i + 1}</div>
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </>
+              )}
+
+              {tab === "feed" && (
+                <>
+                  {developedPosts.length === 0 ? (
+                    <div className="card">
+                      <strong>Fil vide</strong>
+                      <p className="muted">Developpe une pellicule pour voir des souvenirs ici.</p>
+                    </div>
+                  ) : (
+                    developedPosts.map((post) => (
+                      <div className="card" key={post.monthKey}>
+                        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                          <strong>{monthLabel(post.monthKey)}</strong>
+                          <button className="btn blue" onClick={() => alert("Partage mock")}>Partager</button>
+                        </div>
+                        <div className="preview-row" style={{ marginTop: 10 }}>
+                          {Array.from({ length: Math.min(post.shotCount, 6) }).map((_, i) => (
+                            <div className="preview-img" key={i} />
+                          ))}
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </>
+              )}
+            </div>
+
+            <div className="tabs">
+              <button className={`tab ${tab === "feed" ? "active" : ""}`} onClick={() => setTab("feed")}>Fil</button>
+              <button className={`tab ${tab === "camera" ? "active" : ""}`} onClick={() => setTab("camera")}>Camera</button>
+              <button className={`tab ${tab === "gallery" ? "active" : ""}`} onClick={() => setTab("gallery")}>Galerie</button>
+            </div>
+
+            {showDevelop && (
+              <div className="modal-backdrop">
+                <div className="modal">
+                  <h3 style={{ marginTop: 0 }}>Developpement</h3>
+                  <p className="muted">Pellicule {currentRoll.monthKey} prete a reveler.</p>
+                  <div style={{ display: "flex", gap: 8, justifyContent: "flex-end" }}>
+                    <button className="btn" onClick={() => setShowDevelop(false)}>Fermer</button>
+                    <button className="btn yellow" onClick={developCurrentRoll}>Voir la galerie</button>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        );
+      }
+
+      ReactDOM.createRoot(document.getElementById("root")).render(<App />);
+    </script>
+  </body>
+</html>

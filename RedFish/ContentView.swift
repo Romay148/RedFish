@@ -5,15 +5,23 @@ import SwiftUI
 struct ContentView: View {
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
+    private let brandColor = Color(red: 239 / 255, green: 112 / 255, blue: 129 / 255)
+    private let softPinkBackground = Color(red: 255 / 255, green: 241 / 255, blue: 245 / 255)
 
     var body: some View {
-        TabView {
-            CameraCaptureView()
-                .tabItem { Label("Caméra", systemImage: "camera.fill") }
-            GalleryView()
-                .tabItem { Label("Galerie", systemImage: "photo.on.rectangle.angled") }
-            FeedView()
-                .tabItem { Label("Fil", systemImage: "person.2.fill") }
+        ZStack {
+            softPinkBackground
+                .ignoresSafeArea()
+
+            TabView {
+                FeedView()
+                    .tabItem { Label("Fil", systemImage: "person.2.fill") }
+                CameraCaptureView()
+                    .tabItem { Label("Caméra", systemImage: "camera.fill") }
+                GalleryView()
+                    .tabItem { Label("Galerie", systemImage: "photo.on.rectangle.angled") }
+            }
+            .tint(brandColor)
         }
         .task {
             RollService(modelContext: modelContext).ensureCurrentRoll()
