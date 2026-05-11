@@ -46,7 +46,7 @@ struct CameraCaptureView: View {
                 .toolbarBackground(.visible, for: .navigationBar)
                 .toolbarColorScheme(.dark, for: .navigationBar)
                 .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
+                    ToolbarItemGroup(placement: .topBarLeading) {
                         Button {
                             selectedCameraID = nil
                             camera.stopSession()
@@ -56,10 +56,14 @@ struct CameraCaptureView: View {
                         .tint(.white)
                     }
                     ToolbarItem(placement: .principal) {
-                        if let roll = rollService.currentRoll() {
+                        Group {
+                            if let roll = rollService.currentRoll() {
                             Text("\(roll.shotCount)/\(RollConstants.maxShotsPerRoll)")
                                 .font(.headline.monospacedDigit())
                                 .foregroundStyle(.white)
+                            } else {
+                                EmptyView()
+                            }
                         }
                     }
                 }

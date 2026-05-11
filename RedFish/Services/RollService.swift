@@ -7,8 +7,7 @@ final class RollService {
 
     private let modelContext: ModelContext
 
-    /// `nonisolated` : l’init est appelée depuis des closures `ViewBuilder` / `ForEach` que Swift ne marque pas `@MainActor`.
-    nonisolated init(modelContext: ModelContext) {
+    init(modelContext: ModelContext) {
         self.modelContext = modelContext
     }
 
