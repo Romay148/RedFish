@@ -45,24 +45,7 @@ struct CameraCaptureView: View {
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbarBackground(.visible, for: .navigationBar)
                 .toolbarColorScheme(.dark, for: .navigationBar)
-                .toolbar(content: {
-                    ToolbarItemGroup(placement: .topBarLeading) {
-                        Button {
-                            selectedCameraID = nil
-                            camera.stopSession()
-                        } label: {
-                            Label("Appareils", systemImage: "chevron.left")
-                        }
-                        .tint(.white)
-                    }
-                    ToolbarItemGroup(placement: .principal) {
-                        if let roll = rollService.currentRoll() {
-                            Text("\(roll.shotCount)/\(RollConstants.maxShotsPerRoll)")
-                                .font(.headline.monospacedDigit())
-                                .foregroundStyle(.white)
-                        }
-                    }
-                })
+                .toolbar { cameraToolbar }
                 .safeAreaInset(edge: .top) {
                     if let banner {
                         Text(banner)
@@ -183,6 +166,27 @@ struct CameraCaptureView: View {
         }
         .padding()
         .background(.black.opacity(0.35), in: Capsule())
+    }
+
+    @ToolbarContentBuilder
+    private var cameraToolbar: some ToolbarContent {
+        ToolbarItem(placement: .topBarLeading) {
+            Button {
+                selectedCameraID = nil
+                camera.stopSession()
+            } label: {
+                Label("Appareils", systemImage: "chevron.left")
+            }
+            .tint(.white)
+        }
+
+        ToolbarItem(placement: .principal) {
+            if let roll = rollService.currentRoll() {
+                Text("\(roll.shotCount)/\(RollConstants.maxShotsPerRoll)")
+                    .font(.headline.monospacedDigit())
+                    .foregroundStyle(.white)
+            }
+        }
     }
 
     private func capture() {
