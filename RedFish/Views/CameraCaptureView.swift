@@ -62,7 +62,7 @@ struct CameraCaptureView: View {
                                 .foregroundStyle(.white)
                         }
                     }
-                }
+                })
                 .safeAreaInset(edge: .top) {
                     if let banner {
                         Text(banner)
@@ -213,5 +213,4 @@ struct CameraCaptureView: View {
                 }
             }
         }
-                })
 }
