@@ -3,6 +3,7 @@ import SwiftUI
 
 @MainActor
 struct ContentView: View {
+    @EnvironmentObject private var session: SocialSessionStore
     @Environment(\.modelContext) private var modelContext
     @Environment(\.scenePhase) private var scenePhase
     private let brandColor = Color(red: 239 / 255, green: 112 / 255, blue: 129 / 255)
@@ -16,6 +17,8 @@ struct ContentView: View {
             TabView {
                 FeedView()
                     .tabItem { Label("Fil", systemImage: "person.2.fill") }
+                FriendsView()
+                    .tabItem { Label("Amis", systemImage: "person.crop.circle.badge.plus") }
                 CameraCaptureView()
                     .tabItem { Label("Caméra", systemImage: "camera.fill") }
                 GalleryView()
@@ -23,8 +26,18 @@ struct ContentView: View {
             }
             .tint(brandColor)
         }
+        .sheet(isPresented: Binding(
+            get: { session.isBootstrapped && session.profile == nil },
+            set: { _ in }
+        )) {
+            UsernameSetupView()
+                .environmentObject(session)
+        }
         .task {
             RollService(modelContext: modelContext).ensureCurrentRoll()
+            if session.isBootstrapped == false {
+                await session.bootstrap()
+            }
         }
         .onChange(of: scenePhase) { _, phase in
             guard phase == .active else { return }

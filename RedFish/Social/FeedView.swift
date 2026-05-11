@@ -4,29 +4,36 @@ import UIKit
 
 @MainActor
 struct FeedView: View {
-    @Query(sort: \FilmRoll.monthKey, order: .reverse) private var rolls: [FilmRoll]
+    @EnvironmentObject private var session: SocialSessionStore
     @State private var shareImages: [UIImage] = []
     @State private var showShare = false
-
-    private var posts: [Post] {
-        rolls.compactMap { Post.fromDevelopedRoll($0) }
-    }
+    @State private var remotePosts: [RemotePost] = []
+    @State private var imageCache: [String: [UIImage]] = [:]
+    @State private var loading = false
+    @State private var message: String?
 
     var body: some View {
         NavigationStack {
             List {
-                if posts.isEmpty {
+                if loading {
+                    ProgressView("Chargement du fil…")
+                } else if remotePosts.isEmpty {
                     ContentUnavailableView(
                         "Fil vide",
                         systemImage: "person.2",
-                        description: Text("Développez une pellicule pour voir vos souvenirs ici.")
+                        description: Text("Ajoutez un ami puis partagez une pellicule pour voir le fil.")
                     )
                 } else {
-                    ForEach(posts) { post in
+                    ForEach(remotePosts) { post in
                         VStack(alignment: .leading, spacing: 8) {
                             HStack {
-                                Text(post.caption)
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text(post.ownerUsername)
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                    Text(post.caption)
                                     .font(.headline)
+                                }
                                 Spacer()
                                 Button {
                                     sharePost(post)
@@ -37,14 +44,12 @@ struct FeedView: View {
                             }
                             ScrollView(.horizontal, showsIndicators: false) {
                                 HStack(spacing: 8) {
-                                    ForEach(post.imageRelativeNames, id: \.self) { name in
-                                        if let ui = PhotoStorage.shared.loadImage(monthKey: post.monthKey, relativeFileName: name) {
+                                    ForEach(Array((imageCache[post.id] ?? []).enumerated()), id: \.offset) { _, ui in
                                             Image(uiImage: ui)
                                                 .resizable()
                                                 .scaledToFill()
                                                 .frame(width: 120, height: 120)
                                                 .clipShape(RoundedRectangle(cornerRadius: 8))
-                                        }
                                     }
                                 }
                             }
@@ -54,19 +59,46 @@ struct FeedView: View {
                 }
             }
             .navigationTitle("Fil")
+            .task {
+                await reloadFeed()
+            }
+            .refreshable {
+                await reloadFeed()
+            }
             .sheet(isPresented: $showShare) {
                 ActivityView(activityItems: shareImages)
             }
+            .alert("Fil", isPresented: .constant(message != nil), actions: {
+                Button("OK") { message = nil }
+            }, message: {
+                Text(message ?? "")
+            })
         }
     }
 
-    private func sharePost(_ post: Post) {
-        let imgs = post.imageRelativeNames.compactMap {
-            PhotoStorage.shared.loadImage(monthKey: post.monthKey, relativeFileName: $0)
-        }
+    private func sharePost(_ post: RemotePost) {
+        let imgs = imageCache[post.id] ?? []
         guard !imgs.isEmpty else { return }
         shareImages = imgs
         showShare = true
+    }
+
+    private func reloadFeed() async {
+        guard let myUID = session.uid else { return }
+        loading = true
+        do {
+            let posts = try await FeedService.shared.fetchFriendsPosts(myUID: myUID)
+            remotePosts = posts
+            var cache: [String: [UIImage]] = [:]
+            for post in posts {
+                cache[post.id] = await FeedService.shared.loadImages(for: post)
+            }
+            imageCache = cache
+            message = nil
+        } catch {
+            message = error.localizedDescription
+        }
+        loading = false
     }
 }
 
