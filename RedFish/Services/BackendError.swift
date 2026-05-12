@@ -1,7 +1,6 @@
 import Foundation
 
 enum BackendError: LocalizedError {
-    case firebaseUnavailable
     case notAuthenticated
     case usernameTaken
     case invalidUsername
@@ -11,8 +10,6 @@ enum BackendError: LocalizedError {
 
     var errorDescription: String? {
         switch self {
-        case .firebaseUnavailable:
-            return "Firebase n'est pas configuré dans cette build."
         case .notAuthenticated:
             return "Utilisateur non authentifié."
         case .usernameTaken:

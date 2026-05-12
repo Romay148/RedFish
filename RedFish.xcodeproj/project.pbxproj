@@ -21,7 +21,9 @@
 		B9B9B9B9B9B9B9B9B9B9B9B9 /* PhotoStorage.swift in Sources */ = {isa = PBXBuildFile; fileRef = F9F9F9F9F9F9F9F9F9F9F9F9 /* PhotoStorage.swift */; };
 		BABABABABABABABABABABABA /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAFAFAFAFAFAFAFAFAFAFAFA /* CameraManager.swift */; };
 		BBBBBBBBBBBBBBBBBBBBBBBB /* BackendError.swift in Sources */ = {isa = PBXBuildFile; fileRef = E4E4E4E4E4E4E4E4E4E4E4E4 /* BackendError.swift */; };
-		BCEFBCEFBCEFBCEFBCEFBCEF /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5E5E5E5E5E5E5E5E5E5E5E5 /* AuthService.swift */; };
+		C8C8C8C8C8C8C8C8C8C8C8C8 /* RedFishAPIConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7C7C7C7C7C7C7C7C7C7C7C7 /* RedFishAPIConfig.swift */; };
+		C9C9C9C9C9C9C9C9C9C9C9C9 /* TokenKeychain.swift in Sources */ = {isa = PBXBuildFile; fileRef = DADADADADADADADADADADADA /* TokenKeychain.swift */; };
+		D0D0D0D0D0D0D0D0D0D0D0D1 /* RedFishAPIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = D0D0D0D0D0D0D0D0D0D0D0D2 /* RedFishAPIClient.swift */; };
 		BDF0BDF0BDF0BDF0BDF0BDF0 /* UserProfileService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E6E6E6E6E6E6E6E6E6E6E6 /* UserProfileService.swift */; };
 		BEF1BEF1BEF1BEF1BEF1BEF1 /* FriendService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E7E7E7E7E7E7E7E7E7E7E7E7 /* FriendService.swift */; };
 		BF02BF02BF02BF02BF02BF02 /* ShareService.swift in Sources */ = {isa = PBXBuildFile; fileRef = E8E8E8E8E8E8E8E8E8E8E8E8 /* ShareService.swift */; };
@@ -56,7 +58,9 @@
 		F9F9F9F9F9F9F9F9F9F9F9F9 /* PhotoStorage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoStorage.swift; sourceTree = "<group>"; };
 		FAFAFAFAFAFAFAFAFAFAFAFA /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 		E4E4E4E4E4E4E4E4E4E4E4E4 /* BackendError.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackendError.swift; sourceTree = "<group>"; };
-		E5E5E5E5E5E5E5E5E5E5E5E5 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
+		C7C7C7C7C7C7C7C7C7C7C7C7 /* RedFishAPIConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedFishAPIConfig.swift; sourceTree = "<group>"; };
+		DADADADADADADADADADADADA /* TokenKeychain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenKeychain.swift; sourceTree = "<group>"; };
+		D0D0D0D0D0D0D0D0D0D0D0D2 /* RedFishAPIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RedFishAPIClient.swift; sourceTree = "<group>"; };
 		E6E6E6E6E6E6E6E6E6E6E6E6 /* UserProfileService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileService.swift; sourceTree = "<group>"; };
 		E7E7E7E7E7E7E7E7E7E7E7E7 /* FriendService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FriendService.swift; sourceTree = "<group>"; };
 		E8E8E8E8E8E8E8E8E8E8E8E8 /* ShareService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShareService.swift; sourceTree = "<group>"; };
@@ -142,7 +146,9 @@
 				F9F9F9F9F9F9F9F9F9F9F9F9 /* PhotoStorage.swift */,
 				FAFAFAFAFAFAFAFAFAFAFAFA /* CameraManager.swift */,
 				E4E4E4E4E4E4E4E4E4E4E4E4 /* BackendError.swift */,
-				E5E5E5E5E5E5E5E5E5E5E5E5 /* AuthService.swift */,
+				C7C7C7C7C7C7C7C7C7C7C7C7 /* RedFishAPIConfig.swift */,
+				DADADADADADADADADADADADA /* TokenKeychain.swift */,
+				D0D0D0D0D0D0D0D0D0D0D0D2 /* RedFishAPIClient.swift */,
 				E6E6E6E6E6E6E6E6E6E6E6E6 /* UserProfileService.swift */,
 				E7E7E7E7E7E7E7E7E7E7E7E7 /* FriendService.swift */,
 				E8E8E8E8E8E8E8E8E8E8E8E8 /* ShareService.swift */,
@@ -268,7 +274,9 @@
 				B9B9B9B9B9B9B9B9B9B9B9B9 /* PhotoStorage.swift in Sources */,
 				BABABABABABABABABABABABA /* CameraManager.swift in Sources */,
 				BBBBBBBBBBBBBBBBBBBBBBBB /* BackendError.swift in Sources */,
-				BCEFBCEFBCEFBCEFBCEFBCEF /* AuthService.swift in Sources */,
+				C8C8C8C8C8C8C8C8C8C8C8C8 /* RedFishAPIConfig.swift in Sources */,
+				C9C9C9C9C9C9C9C9C9C9C9C9 /* TokenKeychain.swift in Sources */,
+				D0D0D0D0D0D0D0D0D0D0D0D1 /* RedFishAPIClient.swift in Sources */,
 				BDF0BDF0BDF0BDF0BDF0BDF0 /* UserProfileService.swift in Sources */,
 				BEF1BEF1BEF1BEF1BEF1BEF1 /* FriendService.swift in Sources */,
 				BF02BF02BF02BF02BF02BF02 /* ShareService.swift in Sources */,
@@ -355,7 +363,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -386,7 +394,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = "";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;

@@ -166,15 +166,15 @@ struct RollDetailView: View {
 
     private func shareRollToFriendsFeed() {
         guard isSharing == false else { return }
-        guard let myUID = session.uid, let profile = session.profile else {
-            exportMessage = "Connectez-vous d'abord (profil utilisateur manquant)."
+        guard let token = session.accessToken else {
+            exportMessage = "Connectez-vous d'abord (compte requis)."
             showExportAlert = true
             return
         }
         isSharing = true
         Task {
             do {
-                try await ShareService.shared.shareRoll(roll, ownerUID: myUID, ownerUsername: profile.username)
+                try await ShareService.shared.shareRoll(roll, token: token)
                 exportMessage = "Pellicule partagée avec vos amis."
             } catch {
                 exportMessage = "Partage impossible: \(error.localizedDescription)"

@@ -17,7 +17,11 @@ struct FriendsView: View {
                             .textInputAutocapitalization(.never)
                             .autocorrectionDisabled()
                         Button("Envoyer") { sendRequest() }
-                            .disabled(username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || isSending || session.uid == nil)
+                            .disabled(
+                                username.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+                                    || isSending
+                                    || session.accessToken == nil
+                            )
                     }
                 }
 
@@ -28,8 +32,8 @@ struct FriendsView: View {
                     } else {
                         ForEach(pending) { request in
                             HStack {
-                                Text(request.fromUid)
-                                    .font(.caption.monospaced())
+                                Text(request.fromUsername ?? request.fromUid)
+                                    .font(.caption)
                                 Spacer()
                                 Button("Accepter") {
                                     accept(request)
@@ -41,6 +45,13 @@ struct FriendsView: View {
                 }
             }
             .navigationTitle("Amis")
+            .toolbar {
+                if session.accessToken != nil {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button("Déconnexion") { session.logout() }
+                    }
+                }
+            }
             .task { await refreshPending() }
             .refreshable { await refreshPending() }
             .alert("Info", isPresented: .constant(message != nil), actions: {
@@ -52,11 +63,11 @@ struct FriendsView: View {
     }
 
     private func sendRequest() {
-        guard let myUID = session.uid else { return }
+        guard let token = session.accessToken else { return }
         isSending = true
         Task {
             do {
-                try await FriendService.shared.sendFriendRequest(from: myUID, to: username)
+                try await FriendService.shared.sendFriendRequest(token: token, to: username)
                 username = ""
                 message = "Demande envoyée."
             } catch {
@@ -70,7 +81,8 @@ struct FriendsView: View {
     private func accept(_ request: Friendship) {
         Task {
             do {
-                try await FriendService.shared.acceptRequest(request.id)
+                guard let token = session.accessToken else { return }
+                try await FriendService.shared.acceptRequest(token: token, requestID: request.id)
                 message = "Demande acceptée."
             } catch {
                 message = error.localizedDescription
@@ -80,9 +92,9 @@ struct FriendsView: View {
     }
 
     private func refreshPending() async {
-        guard let myUID = session.uid else { return }
+        guard let token = session.accessToken else { return }
         do {
-            pending = try await FriendService.shared.pendingRequests(for: myUID)
+            pending = try await FriendService.shared.pendingRequests(token: token)
         } catch {
             message = error.localizedDescription
         }

@@ -84,14 +84,14 @@ struct FeedView: View {
     }
 
     private func reloadFeed() async {
-        guard let myUID = session.uid else { return }
+        guard let token = session.accessToken else { return }
         loading = true
         do {
-            let posts = try await FeedService.shared.fetchFriendsPosts(myUID: myUID)
+            let posts = try await FeedService.shared.fetchFeed(token: token)
             remotePosts = posts
             var cache: [String: [UIImage]] = [:]
             for post in posts {
-                cache[post.id] = await FeedService.shared.loadImages(for: post)
+                cache[post.id] = await FeedService.shared.loadImages(for: post, token: token)
             }
             imageCache = cache
             message = nil

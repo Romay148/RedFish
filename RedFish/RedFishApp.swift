@@ -1,8 +1,5 @@
 import SwiftData
 import SwiftUI
-#if canImport(FirebaseCore)
-import FirebaseCore
-#endif
 
 @main
 struct RedFishApp: App {
@@ -23,13 +20,5 @@ struct RedFishApp: App {
                 .environmentObject(session)
         }
         .modelContainer(sharedModelContainer)
-    }
-
-    init() {
-#if canImport(FirebaseCore)
-        if FirebaseApp.app() == nil {
-            FirebaseApp.configure()
-        }
-#endif
     }
 }

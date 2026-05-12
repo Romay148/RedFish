@@ -51,5 +51,6 @@ struct ContentView: View {
     let config = ModelConfiguration(isStoredInMemoryOnly: true)
     let container = try! ModelContainer(for: schema, configurations: [config])
     return ContentView()
+        .environmentObject(SocialSessionStore())
         .modelContainer(container)
 }
