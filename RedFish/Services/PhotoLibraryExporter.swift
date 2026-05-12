@@ -82,7 +82,7 @@ final class PhotoLibraryExporter {
     }
 
     private func createAlbum(named name: String) async throws -> PHObjectPlaceholder {
-        try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<PHObjectPlaceholder, Error>) in
             var placeholder: PHObjectPlaceholder?
             PHPhotoLibrary.shared().performChanges({
                 let request = PHAssetCollectionChangeRequest.creationRequestForAssetCollection(withTitle: name)
@@ -100,7 +100,7 @@ final class PhotoLibraryExporter {
     }
 
     private func createAssets(from images: [UIImage]) async throws -> [String] {
-        try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[String], Error>) in
             var placeholders: [PHObjectPlaceholder] = []
             PHPhotoLibrary.shared().performChanges({
                 for image in images {
@@ -125,7 +125,7 @@ final class PhotoLibraryExporter {
 
     private func addAssets(with identifiers: [String], to collection: PHAssetCollection) async throws {
         let fetch = PHAsset.fetchAssets(withLocalIdentifiers: identifiers, options: nil)
-        try await withCheckedThrowingContinuation { continuation in
+        try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<Void, Error>) in
             PHPhotoLibrary.shared().performChanges({
                 if let request = PHAssetCollectionChangeRequest(for: collection) {
                     request.addAssets(fetch)
