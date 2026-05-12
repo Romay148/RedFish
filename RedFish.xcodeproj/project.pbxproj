@@ -39,7 +39,6 @@
 		C2F2C2F2C2F2C2F2C2F2C2F2 /* UsernameSetupView.swift in Sources */ = {isa = PBXBuildFile; fileRef = EC0EC0EC0EC0EC0EC0EC0EC0 /* UsernameSetupView.swift */; };
 		C4C4C4C4C4C4C4C4C4C4C4C4 /* PhotoLibraryExporter.swift in Sources */ = {isa = PBXBuildFile; fileRef = D4D4D4D4D4D4D4D4D4D4D4D4 /* PhotoLibraryExporter.swift */; };
 		C5C5C5C5C5C5C5C5C5C5C5C5 /* RollPhotoViewer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5D5D5D5D5D5D5D5D5D5D5D5 /* RollPhotoViewer.swift */; };
-		C6C6C6C6C6C6C6C6C6C6C6C6 /* appareilphotodetourne.png in Resources */ = {isa = PBXBuildFile; fileRef = D6D6D6D6D6D6D6D6D6D6D6D6 /* appareilphotodetourne.png */; };
 		C3C3C3C3C3C3C3C3C3C3C3C3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = D3D3D3D3D3D3D3D3D3D3D3D3 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -76,7 +75,6 @@
 		EC0EC0EC0EC0EC0EC0EC0EC0 /* UsernameSetupView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UsernameSetupView.swift; sourceTree = "<group>"; };
 		D4D4D4D4D4D4D4D4D4D4D4D4 /* PhotoLibraryExporter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhotoLibraryExporter.swift; sourceTree = "<group>"; };
 		D5D5D5D5D5D5D5D5D5D5D5D5 /* RollPhotoViewer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RollPhotoViewer.swift; sourceTree = "<group>"; };
-		D6D6D6D6D6D6D6D6D6D6D6D6 /* appareilphotodetourne.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = appareilphotodetourne.png; sourceTree = "<group>"; };
 		D3D3D3D3D3D3D3D3D3D3D3D3 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E0E0E0E0E0E0E0E0E0E0E0E0 /* RedFish.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RedFish.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -111,7 +109,6 @@
 				3C3C3C3C3C3C3C3C3C3C3C3C /* Views */,
 				3D3D3D3D3D3D3D3D3D3D3D3D /* Social */,
 				D3D3D3D3D3D3D3D3D3D3D3D3 /* Assets.xcassets */,
-				D6D6D6D6D6D6D6D6D6D6D6D6 /* appareilphotodetourne.png */,
 			);
 			path = RedFish;
 			sourceTree = "<group>";
@@ -249,7 +246,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				C3C3C3C3C3C3C3C3C3C3C3C3 /* Assets.xcassets in Resources */,
-				C6C6C6C6C6C6C6C6C6C6C6C6 /* appareilphotodetourne.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

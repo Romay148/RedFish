@@ -121,6 +121,7 @@ struct CameraCaptureView: View {
                 } label: {
                     VStack(alignment: .leading, spacing: 8) {
                         Image("appareilphotodetourne")
+                            .renderingMode(.original)
                             .resizable()
                             .scaledToFit()
                             .frame(maxWidth: 300, maxHeight: 220)
