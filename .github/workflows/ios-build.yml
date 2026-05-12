@@ -8,13 +8,34 @@ on:
       - "RedFish/**"
       - "RedFish.xcodeproj/**"
       - ".github/workflows/ios-build.yml"
+  pull_request:
+    branches: [main, master]
+    paths:
+      - "RedFish/**"
+      - "RedFish.xcodeproj/**"
+      - ".github/workflows/ios-build.yml"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ios-build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
+    name: Xcode (unsigned IPA)
     runs-on: macos-latest
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Outils Xcode / Swift
+        run: |
+          set -euxo pipefail
+          xcodebuild -version
+          swift --version
 
       - name: Build app (unsigned)
         run: |
@@ -46,14 +67,17 @@ jobs:
         with:
           name: xcodebuild-log
           path: xcodebuild.log
+          retention-days: 14
 
       - name: Create payload
         run: |
+          set -euxo pipefail
           mkdir -p Payload
           cp -R build/Build/Products/Debug-iphoneos/RedFish.app Payload/
 
       - name: Package IPA
         run: |
+          set -euxo pipefail
           /usr/bin/zip -r RedFish-unsigned.ipa Payload
 
       - name: Upload IPA artifact
@@ -61,8 +85,10 @@ jobs:
         with:
           name: RedFish-ipa
           path: RedFish-unsigned.ipa
+          retention-days: 30
 
       - name: Rappel installation (Sideloadly)
+        if: success()
         run: |
           echo "=== IPA non signée ==="
           echo "1) Télécharge l'artifact RedFish-ipa depuis l'onglet Actions de GitHub."

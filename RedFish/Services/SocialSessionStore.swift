@@ -53,7 +53,7 @@ final class SocialSessionStore: ObservableObject {
             applyAuth(token: r.accessToken, user: r.user)
             errorMessage = nil
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = Self.friendlyConnectionMessage(for: error)
         }
     }
 
@@ -64,8 +64,32 @@ final class SocialSessionStore: ObservableObject {
             applyAuth(token: r.accessToken, user: r.user)
             errorMessage = nil
         } catch {
-            errorMessage = error.localizedDescription
+            errorMessage = Self.friendlyConnectionMessage(for: error)
         }
+    }
+
+    /// Messages lisibles pour erreurs réseau / TLS / JSON (évite le libellé système opaque).
+    private static func friendlyConnectionMessage(for error: Error) -> String {
+        if let be = error as? BackendError {
+            return be.localizedDescription
+        }
+        if let urlError = error as? URLError {
+            switch urlError.code {
+            case .notConnectedToInternet, .networkConnectionLost:
+                return "Pas de connexion Internet. Vérifie le Wi‑Fi ou les données mobiles."
+            case .cannotFindHost, .dnsLookupFailed:
+                return "Serveur introuvable. Vérifie que l’adresse de l’API est correcte (voir bas d’écran) et que le domaine existe."
+            case .cannotConnectToHost, .timedOut:
+                return "Impossible de joindre le serveur (temps dépassé ou pare-feu). Réessaie plus tard."
+            case .secureConnectionFailed, .serverCertificateUntrusted, .clientCertificateRejected:
+                return "Connexion HTTPS refusée (certificat). Le serveur doit avoir un certificat valide (ex. Let’s Encrypt)."
+            case .badServerResponse:
+                return "Réponse serveur inattendue. Vérifie que l’API tourne derrière le même chemin /RedFish/api/v1/."
+            default:
+                break
+            }
+        }
+        return error.localizedDescription
     }
 
     func logout() {

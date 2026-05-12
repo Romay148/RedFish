@@ -26,7 +26,7 @@ struct ContentView: View {
             }
             .tint(brandColor)
         }
-        .sheet(isPresented: Binding(
+        .fullScreenCover(isPresented: Binding(
             get: { session.isBootstrapped && session.profile == nil },
             set: { _ in }
         )) {

@@ -54,16 +54,64 @@ final class RedFishAPIClient {
             if let env = try? jsonDecoder.decode(APIErrorEnvelope.self, from: data), let msg = env.error, !msg.isEmpty {
                 throw BackendError.generic(msg)
             }
+            if http.statusCode == 404 {
+                throw BackendError.generic(
+                    "Route API introuvable (404). Vérifie que le serveur expose bien /feed et /friends/… (fichier de référence : docs/redfish-server-full.js sur le dépôt)."
+                )
+            }
             throw BackendError.generic("Erreur serveur (\(http.statusCode))")
         }
     }
 
     // MARK: - Auth
 
+    /// Tolère les APIs qui renvoient `id` en nombre ou `created_at` dans un format ISO partiel.
     struct AuthUserDTO: Decodable {
         let id: String
         let username: String
         let createdAt: Date?
+
+        enum CodingKeys: String, CodingKey {
+            case id, username, createdAt
+        }
+
+        init(from decoder: Decoder) throws {
+            let c = try decoder.container(keyedBy: CodingKeys.self)
+            if let s = try? c.decode(String.self, forKey: .id) {
+                id = s
+            } else if let i = try? c.decode(Int.self, forKey: .id) {
+                id = String(i)
+            } else if let i = try? c.decode(Int64.self, forKey: .id) {
+                id = String(i)
+            } else {
+                throw DecodingError.typeMismatch(
+                    String.self,
+                    .init(codingPath: c.codingPath + [CodingKeys.id], debugDescription: "id doit être une chaîne ou un entier")
+                )
+            }
+            username = try c.decode(String.self, forKey: .username)
+            createdAt = try Self.decodeOptionalDate(from: c, forKey: .createdAt)
+        }
+
+        private static func decodeOptionalDate(from c: KeyedDecodingContainer<CodingKeys>, forKey key: CodingKeys) throws -> Date? {
+            guard c.contains(key) else { return nil }
+            if try c.decodeNil(forKey: key) { return nil }
+            if let d = try? c.decode(Date.self, forKey: key) { return d }
+            if let s = try? c.decode(String.self, forKey: key) {
+                let t = s.trimmingCharacters(in: .whitespacesAndNewlines)
+                if t.isEmpty { return nil }
+                let f1 = ISO8601DateFormatter()
+                f1.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+                if let d = f1.date(from: t) { return d }
+                let f2 = ISO8601DateFormatter()
+                f2.formatOptions = [.withInternetDateTime]
+                if let d = f2.date(from: t) { return d }
+                let f3 = ISO8601DateFormatter()
+                f3.formatOptions = [.withFullDate]
+                return f3.date(from: t)
+            }
+            return nil
+        }
     }
 
     struct AuthTokenDTO: Decodable {
@@ -93,7 +141,23 @@ final class RedFishAPIClient {
         req.httpBody = try jsonEncoder.encode(LoginBody(username: username, password: password))
         let (data, resp) = try await urlSession.data(for: req)
         try throwIfNeeded(data: data, response: resp)
-        return try jsonDecoder.decode(AuthTokenDTO.self, from: data)
+        return try decodeAuthTokenResponse(data)
+    }
+
+    private func decodeAuthTokenResponse(_ data: Data) throws -> AuthTokenDTO {
+        if let s = String(data: data.prefix(80), encoding: .utf8),
+           s.trimmingCharacters(in: .whitespacesAndNewlines).hasPrefix("<") {
+            throw BackendError.generic(
+                "Réponse HTML au lieu de JSON (souvent mauvaise URL ou page d’erreur du serveur). Vérifie l’URL de base de l’API."
+            )
+        }
+        do {
+            return try jsonDecoder.decode(AuthTokenDTO.self, from: data)
+        } catch {
+            throw BackendError.generic(
+                "Réponse d’authentification illisible. Le serveur doit renvoyer JSON : access_token, user { id, username, created_at? }. Détail : \(error.localizedDescription)"
+            )
+        }
     }
 
     // MARK: - Me
